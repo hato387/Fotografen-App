@@ -37,7 +37,7 @@
 - Saisonphasen je Motiv → **PROJ-2**
 - Kalenderfilter (aktiv/bevorstehend, Relevanz) → **PROJ-3**
 - Fotospots, GPS & Beobachtungen (Motive werden dort optional verknüpft) → **PROJ-5** (vereint die frühere Journal-Idee)
-- Fotoeinstellungen je Motiv → **PROJ-7**
+- Fotoeinstellungen (eigenständige Sammlung, nicht motivgebunden) → **PROJ-7**
 - KI-gestütztes Befüllen von Motiven → **PROJ-8**
 - Echtes Bild-Speichern (nur Links in v1)
 - Cloud / Sync / Multi-User

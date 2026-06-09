@@ -16,7 +16,7 @@ Ambitionierter Hobby-Naturfotograf (Einzelnutzer). **Pain Point heute:** Wissen 
 | P0 (MVP) | Backup/Import (JSON) | Planned |
 | P1 | Fotospots (inkl. Beobachtungen & Ideen) | Planned |
 | ~~P1~~ | ~~Journal~~ (zusammengelegt mit Fotospots) | Entfällt |
-| P1 | Fotoeinstellungen je Motiv | Roadmap |
+| P1 | Fotoeinstellungen (eigenständige Rezept-Sammlung) | Planned |
 
 ## Success Metrics
 - Regelmäßige Nutzung zur Shooting-Planung
