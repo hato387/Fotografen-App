@@ -24,6 +24,7 @@ import {
   FormMessage,
 } from "@/components/ui/form";
 import { Input } from "@/components/ui/input";
+import { Label } from "@/components/ui/label";
 import {
   Select,
   SelectContent,
@@ -232,7 +233,7 @@ export function MotivFormDialog({ open, onOpenChange, motiv, onSubmit }: Props) 
 
             {/* Quellen (Titel + optionaler Link) */}
             <div className="space-y-2">
-              <FormLabel>Quellen</FormLabel>
+              <Label>Quellen</Label>
               {fields.map((f, index) => (
                 <div key={f.id} className="flex items-start gap-2">
                   <Input
