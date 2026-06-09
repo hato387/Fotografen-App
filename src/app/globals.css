@@ -83,5 +83,18 @@
   }
   body {
     @apply bg-background text-foreground;
+    min-height: 100vh;
+    background-image:
+      radial-gradient(
+        60rem 40rem at 110% -10%,
+        hsl(var(--primary) / 0.07),
+        transparent 60%
+      ),
+      radial-gradient(
+        50rem 40rem at -10% 0%,
+        hsl(var(--secondary) / 0.5),
+        transparent 55%
+      );
+    background-attachment: fixed;
   }
 }

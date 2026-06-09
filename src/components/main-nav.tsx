@@ -34,14 +34,21 @@ export function MainNav() {
   const pathname = usePathname();
 
   return (
-    <header className="sticky top-0 z-30 border-b bg-background/90 backdrop-blur">
-      <div className="mx-auto flex h-14 max-w-6xl items-center gap-4 px-4">
-        <Link href="/motive" className="flex items-center gap-2 font-semibold">
-          <span className="text-lg">🌲</span>
-          <span className="hidden sm:inline">Naturfoto</span>
+    <header className="sticky top-0 z-30 border-b border-border/60 bg-background/70 backdrop-blur-xl">
+      <div className="mx-auto flex h-16 max-w-6xl items-center gap-3 px-4">
+        <Link href="/motive" className="flex items-center gap-2.5">
+          <span className="flex h-9 w-9 items-center justify-center rounded-xl bg-primary text-base shadow-sm">
+            🌲
+          </span>
+          <span className="hidden flex-col leading-none sm:flex">
+            <span className="font-semibold tracking-tight">Naturfoto</span>
+            <span className="text-[11px] text-muted-foreground">
+              lokal · offline
+            </span>
+          </span>
         </Link>
 
-        <nav className="flex flex-1 items-center gap-1 overflow-x-auto">
+        <nav className="flex flex-1 items-center justify-center gap-0.5 overflow-x-auto">
           {NAV_ITEMS.map((item) => {
             const active =
               item.ready &&
@@ -53,10 +60,10 @@ export function MainNav() {
                 <span
                   key={item.href}
                   title="Bald verfügbar"
-                  className="flex cursor-not-allowed items-center gap-1.5 rounded-md px-2.5 py-1.5 text-sm text-muted-foreground/50"
+                  className="flex cursor-not-allowed items-center gap-1.5 rounded-full px-3 py-1.5 text-sm text-muted-foreground/40"
                 >
                   <Icon className="h-4 w-4" />
-                  <span className="hidden md:inline">{item.label}</span>
+                  <span className="hidden lg:inline">{item.label}</span>
                 </span>
               );
             }
@@ -66,14 +73,14 @@ export function MainNav() {
                 key={item.href}
                 href={item.href}
                 className={cn(
-                  "flex items-center gap-1.5 rounded-md px-2.5 py-1.5 text-sm transition-colors",
+                  "flex items-center gap-1.5 rounded-full px-3 py-1.5 text-sm font-medium transition-colors",
                   active
-                    ? "bg-accent text-accent-foreground"
-                    : "text-foreground/70 hover:bg-accent/60 hover:text-foreground",
+                    ? "bg-primary text-primary-foreground shadow-sm"
+                    : "text-foreground/70 hover:bg-accent hover:text-foreground",
                 )}
               >
                 <Icon className="h-4 w-4" />
-                <span className="hidden md:inline">{item.label}</span>
+                <span className="hidden lg:inline">{item.label}</span>
               </Link>
             );
           })}

@@ -13,7 +13,6 @@ import {
 } from "@/components/motive/motiv-form-dialog";
 import { Badge } from "@/components/ui/badge";
 import { Button } from "@/components/ui/button";
-import { Separator } from "@/components/ui/separator";
 import { Skeleton } from "@/components/ui/skeleton";
 import { useMotive } from "@/hooks/use-motive";
 
@@ -62,6 +61,14 @@ export default function MotivDetailPage() {
   };
 
   const showImage = motiv.bildUrl && !imgError;
+  const hasContent = Boolean(
+    motiv.beschreibung ||
+      motiv.verhalten ||
+      motiv.lebensraum ||
+      motiv.fototipps ||
+      motiv.ethikhinweise ||
+      motiv.quellen.length > 0,
+  );
 
   return (
     <div className="space-y-6">
@@ -104,58 +111,66 @@ export default function MotivDetailPage() {
       </div>
 
       {showImage && (
-        <div className="overflow-hidden rounded-xl border bg-muted">
+        <div className="overflow-hidden rounded-2xl border border-border/60 bg-muted shadow-sm">
           {/* eslint-disable-next-line @next/next/no-img-element */}
           <img
             src={motiv.bildUrl}
             alt={motiv.name}
-            className="max-h-96 w-full object-cover"
+            className="max-h-[26rem] w-full object-cover"
             onError={() => setImgError(true)}
           />
         </div>
       )}
       {motiv.bildUrl && imgError && (
-        <div className="flex items-center gap-2 rounded-xl border border-dashed p-4 text-sm text-muted-foreground">
+        <div className="flex items-center gap-2 rounded-2xl border border-dashed p-4 text-sm text-muted-foreground">
           <ImageOff className="h-4 w-4" /> Bild-Link konnte nicht geladen werden.
         </div>
       )}
 
-      <div className="space-y-5">
-        <Field label="Beschreibung" value={motiv.beschreibung} />
-        <Field label="Verhalten" value={motiv.verhalten} />
-        <Field label="Lebensraum" value={motiv.lebensraum} />
-        <Field label="Fototipps" value={motiv.fototipps} />
-        <Field label="Ethikhinweise" value={motiv.ethikhinweise} />
+      <div className="rounded-2xl border border-border/60 bg-card/50 p-6">
+        {hasContent ? (
+          <div className="space-y-6">
+            <Field label="Beschreibung" value={motiv.beschreibung} />
+            <Field label="Verhalten" value={motiv.verhalten} />
+            <Field label="Lebensraum" value={motiv.lebensraum} />
+            <Field label="Fototipps" value={motiv.fototipps} />
+            <Field label="Ethikhinweise" value={motiv.ethikhinweise} />
 
-        {motiv.quellen.length > 0 && (
-          <div>
-            <h3 className="mb-1 text-sm font-medium text-muted-foreground">
-              Quellen
-            </h3>
-            <ul className="space-y-1">
-              {motiv.quellen.map((q, i) => (
-                <li key={i}>
-                  {q.link ? (
-                    <a
-                      href={q.link}
-                      target="_blank"
-                      rel="noopener noreferrer"
-                      className="inline-flex items-center gap-1 text-primary hover:underline"
-                    >
-                      {q.titel}
-                      <ExternalLink className="h-3 w-3" />
-                    </a>
-                  ) : (
-                    <span>{q.titel}</span>
-                  )}
-                </li>
-              ))}
-            </ul>
+            {motiv.quellen.length > 0 && (
+              <div>
+                <h3 className="mb-2 text-sm font-medium text-muted-foreground">
+                  Quellen
+                </h3>
+                <ul className="space-y-1.5">
+                  {motiv.quellen.map((q, i) => (
+                    <li key={i}>
+                      {q.link ? (
+                        <a
+                          href={q.link}
+                          target="_blank"
+                          rel="noopener noreferrer"
+                          className="inline-flex items-center gap-1.5 text-primary hover:underline"
+                        >
+                          {q.titel}
+                          <ExternalLink className="h-3.5 w-3.5" />
+                        </a>
+                      ) : (
+                        <span>{q.titel}</span>
+                      )}
+                    </li>
+                  ))}
+                </ul>
+              </div>
+            )}
           </div>
+        ) : (
+          <p className="text-center text-sm text-muted-foreground">
+            Dieses Motiv hat noch keine Details. Klick auf „Bearbeiten", um
+            Beschreibung, Fototipps & Co. zu ergänzen.
+          </p>
         )}
       </div>
 
-      <Separator />
       <p className="text-xs text-muted-foreground">
         Angelegt am {formatDate(motiv.erstelltAm)}
         {motiv.geaendertAm !== motiv.erstelltAm &&
