@@ -1,6 +1,6 @@
 # PROJ-1: Motive-Datenbank
 
-## Status: Planned
+## Status: Architected
 **Created:** 2026-06-09
 **Last Updated:** 2026-06-09
 
@@ -86,12 +86,72 @@
 <!-- Added by /architecture -->
 | Decision | Rationale | Date |
 |----------|-----------|------|
+| localStorage statt Server/Supabase | Persönliche App, kein Login/Sync nötig (laut PRD) | 2026-06-09 |
+| Geteilte Speicher-Schicht + eigener React-Hook pro Datenart | Eine wiederverwendbare Stelle für Lesen/Schreiben; hält UI aktuell; künftige Features (PROJ-2/5/7) nutzen sie mit | 2026-06-09 |
+| Versioniertes Speicherformat von Anfang an | Macht PROJ-4-Backup/Import robust (Format-Version) | 2026-06-09 |
+| localStorage-Schlüssel pro Datenart (`naturfoto:motive` …) | Klare Trennung der Collections; einfacher Backup-Export | 2026-06-09 |
+| IDs via eingebautes `crypto.randomUUID()` | Kein Zusatzpaket nötig | 2026-06-09 |
+| react-hook-form + Zod fürs Formular | Bereits im Stack; saubere Pflichtfeld-Validierung | 2026-06-09 |
+| Motiv-Detail als eigene Route `/motive/[id]` | Deep-Links aus Kalender (PROJ-3) und Fotospots (PROJ-5) + sauberer Zurück-Knopf | 2026-06-09 |
+| Motive-Übersicht als Startseite `/motive` | Motive sind das Fundament der App | 2026-06-09 |
 
 ---
 <!-- Sections below are added by subsequent skills -->
 
 ## Tech Design (Solution Architect)
-_To be added by /architecture_
+
+### A) Komponentenstruktur
+```
+App-Grundgerüst (neu, einmalig)
+└── Navigation (Motive · Kalender · Fotospots · Einstellungen · Backup · KI)
+    └── Seite „Motive" (/motive — auch Startseite)
+        ├── Kopfzeile: Titel + Button „Neues Motiv"
+        ├── Werkzeugleiste: Textsuche + Kategorie-Filter (Tier/Pflanze/Landschaft)
+        ├── Karten-Raster der Motive
+        │   └── Motiv-Karte: Kategorie-Symbol, Name, Tags, Vorschaubild
+        └── Leerzustand: Hinweis + „Erstes Motiv anlegen"
+
+    └── Seite „Motiv-Detail" (/motive/[id])
+        ├── Alle Felder (Beschreibung, Verhalten, … Quellen klickbar)
+        ├── Button „Bearbeiten" → Formular-Dialog
+        └── Button „Löschen" → Bestätigungsdialog (mit Warnung bei verknüpften Daten)
+
+    └── Motiv-Formular (Dialog, für Anlegen & Bearbeiten)
+        └── Felder mit Validierung (Name + Kategorie Pflicht)
+```
+
+> **Hinweis:** PROJ-1 etabliert zugleich das **App-Grundgerüst** (Navigation) als erstes echtes Feature.
+
+### B) Datenmodell (in Worten)
+```
+Ein Motiv hat:
+- Eindeutige ID (automatisch erzeugt)
+- Name (Pflicht)
+- Kategorie (Tier | Pflanze | Landschaft, Pflicht)
+- Beschreibung, Verhalten, Lebensraum, Fototipps, Ethikhinweise (optionaler Text)
+- Tags (optionale Liste von Schlagwörtern)
+- Quellen (optionale Liste aus: Titel + optionalem Link)
+- Bild-Link (optionale URL)
+- Erstellt-am / Geändert-am (Zeitstempel)
+
+Gespeichert in: Browser-localStorage (kein Server).
+Schlüssel: "naturfoto:motive" → Liste aller Motive.
+```
+
+**Geteiltes Fundament:** Eine kleine Speicher-Schicht mit **Format-Version** und je einem Schlüssel pro Datenart (`naturfoto:motive`, später `naturfoto:saisonphasen`, `naturfoto:fotospots`, `naturfoto:fotoeinstellungen`). Wird von PROJ-2/5/7 mitbenutzt und von PROJ-4 (Backup/Import) als Grundlage genutzt.
+
+### C) Tech-Entscheidungen
+| Entscheidung | Warum |
+|--------------|-------|
+| localStorage statt Server | Persönliche App, kein Login/Sync nötig |
+| Eigener „Datenhaken" (React-Hook) pro Datenart | Liest/schreibt localStorage, hält UI aktuell, wiederverwendbar |
+| Versioniertes Speicherformat | Robuste PROJ-4-Backups/Importe |
+| react-hook-form + Zod | Bereits im Stack; saubere Validierung |
+| IDs via `crypto.randomUUID()` | Kein Zusatzpaket |
+| Detail als eigene Route | Deep-Links + Zurück-Knopf |
+
+### D) Abhängigkeiten
+**Keine neuen Pakete.** Vorhanden: shadcn/ui (card, dialog, alert-dialog, input, textarea, select, badge, form, label, button), Zod, react-hook-form.
 
 ## QA Test Results
 _To be added by /qa_
