@@ -11,7 +11,9 @@ export function ThemeToggle() {
 
   useEffect(() => setMounted(true), []);
 
-  const isDark = resolvedTheme === "dark";
+  // Vor dem Mount kennt der Client das echte Theme noch nicht — bis dahin
+  // denselben Zustand wie der Server annehmen (verhindert Hydration-Mismatch).
+  const isDark = mounted && resolvedTheme === "dark";
 
   return (
     <Button
@@ -20,12 +22,7 @@ export function ThemeToggle() {
       aria-label={isDark ? "Hellen Modus aktivieren" : "Dunklen Modus aktivieren"}
       onClick={() => setTheme(isDark ? "light" : "dark")}
     >
-      {/* Erst nach dem Mount das echte Icon zeigen (kein Hydration-Mismatch). */}
-      {mounted && isDark ? (
-        <Sun className="h-5 w-5" />
-      ) : (
-        <Moon className="h-5 w-5" />
-      )}
+      {isDark ? <Sun className="h-5 w-5" /> : <Moon className="h-5 w-5" />}
     </Button>
   );
 }
