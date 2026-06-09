@@ -15,7 +15,28 @@
 
 | ID | Feature | Status | Spec | Created |
 |----|---------|--------|------|---------|
+| PROJ-1 | Motive-Datenbank | Roadmap | — | 2026-06-09 |
+| PROJ-2 | Saisonphasen | Roadmap | — | 2026-06-09 |
+| PROJ-3 | Kalender | Roadmap | — | 2026-06-09 |
+| PROJ-4 | Backup/Import | Roadmap | — | 2026-06-09 |
+| PROJ-5 | Fotospots | Roadmap | — | 2026-06-09 |
+| PROJ-6 | Journal | Roadmap | — | 2026-06-09 |
+| PROJ-7 | Fotoeinstellungen | Roadmap | — | 2026-06-09 |
 
 <!-- Add features above this line -->
 
-## Next Available ID: PROJ-1
+## Feature Details & Dependencies
+
+| ID | Feature | Prio | Hängt ab von | Beschreibung |
+|----|---------|------|--------------|--------------|
+| PROJ-1 | Motive-Datenbank | P0 | — | Arten/Landschaften anlegen & verwalten: Beschreibung, Verhalten, Lebensraum, Fototipps, Ethikhinweise, Tags, Quellen |
+| PROJ-2 | Saisonphasen | P0 | PROJ-1 | Zeitfenster (Kalenderwochen) je Motiv mit Region & Konfidenz |
+| PROJ-3 | Kalender | P0 | PROJ-1, PROJ-2 | Wochenansicht + Jahres-Timeline, filterbar (Kategorie, Text, Art, Aktiv/Bevorstehend, Relevanz) |
+| PROJ-4 | Backup/Import | P0 | PROJ-1 | Voll-Backup (JSON) + Motiv-Datenpakete, datenschutzbereinigt |
+| PROJ-5 | Fotospots | P1 | — | GPS-Koordinaten-Verwaltung für Orte |
+| PROJ-6 | Journal | P1 | PROJ-1, PROJ-5 | Eigene Beobachtungen, verknüpft mit Motiv & Spot |
+| PROJ-7 | Fotoeinstellungen | P1 | PROJ-1 | Kameraeinstellungen (Blende, ISO, Brennweite …) je Motiv |
+
+**Empfohlene Baureihenfolge:** PROJ-1 → PROJ-2 → PROJ-3 → PROJ-4 *(MVP fertig)* → PROJ-5 → PROJ-6 → PROJ-7
+
+## Next Available ID: PROJ-8
