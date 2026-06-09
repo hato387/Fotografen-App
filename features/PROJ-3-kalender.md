@@ -49,7 +49,7 @@
 ## Out of Scope
 - Anlegen/Bearbeiten von Phasen → **PROJ-2** (hier nur Anzeige/Filter)
 - Echte Kalenderdaten/Termine, Erinnerungen/Benachrichtigungen
-- Fotospots/Journal-Verknüpfung in der Kalenderansicht → **PROJ-5/6**
+- Fotospot-Verknüpfung in der Kalenderansicht → **PROJ-5**
 - Export der Kalenderansicht (Bild/PDF)
 
 ## Acceptance Criteria

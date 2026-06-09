@@ -36,8 +36,7 @@
 ## Out of Scope
 - Saisonphasen je Motiv → **PROJ-2**
 - Kalenderfilter (aktiv/bevorstehend, Relevanz) → **PROJ-3**
-- Fotospots & GPS → **PROJ-5**
-- Journal-Verknüpfung → **PROJ-6**
+- Fotospots, GPS & Beobachtungen (Motive werden dort optional verknüpft) → **PROJ-5** (vereint die frühere Journal-Idee)
 - Fotoeinstellungen je Motiv → **PROJ-7**
 - KI-gestütztes Befüllen von Motiven → **PROJ-8**
 - Echtes Bild-Speichern (nur Links in v1)

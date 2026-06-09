@@ -14,8 +14,8 @@ Ambitionierter Hobby-Naturfotograf (Einzelnutzer). **Pain Point heute:** Wissen 
 | P0 (MVP) | Saisonphasen je Motiv | Planned |
 | P0 (MVP) | Kalender (Woche + Jahres-Timeline, filterbar) | Planned |
 | P0 (MVP) | Backup/Import (JSON) | Planned |
-| P1 | Fotospots (GPS) | Planned |
-| P1 | Journal (Beobachtungen) | Roadmap |
+| P1 | Fotospots (inkl. Beobachtungen & Ideen) | Planned |
+| ~~P1~~ | ~~Journal~~ (zusammengelegt mit Fotospots) | Entfällt |
 | P1 | Fotoeinstellungen je Motiv | Roadmap |
 
 ## Success Metrics

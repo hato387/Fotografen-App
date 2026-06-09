@@ -19,8 +19,8 @@
 | PROJ-2 | Saisonphasen | Planned | [Spec](PROJ-2-saisonphasen.md) | 2026-06-09 |
 | PROJ-3 | Kalender | Planned | [Spec](PROJ-3-kalender.md) | 2026-06-09 |
 | PROJ-4 | Backup/Import | Planned | [Spec](PROJ-4-backup-import.md) | 2026-06-09 |
-| PROJ-5 | Fotospots | Planned | [Spec](PROJ-5-fotospots.md) | 2026-06-09 |
-| PROJ-6 | Journal | Roadmap | — | 2026-06-09 |
+| PROJ-5 | Fotospots (inkl. Beobachtungen & Ideen) | Planned | [Spec](PROJ-5-fotospots.md) | 2026-06-09 |
+| PROJ-6 | Journal | ~~Zusammengelegt mit PROJ-5~~ | — | 2026-06-09 |
 | PROJ-7 | Fotoeinstellungen | Roadmap | — | 2026-06-09 |
 | PROJ-8 | KI-Motiv-Prompt-Generator | Roadmap | — | 2026-06-09 |
 
@@ -34,11 +34,11 @@
 | PROJ-2 | Saisonphasen | P0 | PROJ-1 | Zeitfenster (Kalenderwochen) je Motiv mit Region & Konfidenz |
 | PROJ-3 | Kalender | P0 | PROJ-1, PROJ-2 | Wochenansicht + Jahres-Timeline, filterbar (Kategorie, Text, Art, Aktiv/Bevorstehend, Relevanz) |
 | PROJ-4 | Backup/Import | P0 | PROJ-1 | Voll-Backup (JSON) + Motiv-Datenpakete, datenschutzbereinigt |
-| PROJ-5 | Fotospots | P1 | — | GPS-Koordinaten-Verwaltung für Orte |
-| PROJ-6 | Journal | P1 | PROJ-1, PROJ-5 | Eigene Beobachtungen, verknüpft mit Motiv & Spot |
+| PROJ-5 | Fotospots (inkl. Beobachtungen & Ideen) | P1 | PROJ-1 | Orte mit optionalem GPS, verknüpften Motiven, Beobachtungen/Fotoideen (Freitext) und Timing-Notiz. **Vereint Fotospots + Journal** |
+| PROJ-6 | ~~Journal~~ | — | — | **Zusammengelegt mit PROJ-5** — kein eigenes Feature mehr (keine separate Journal-Flut) |
 | PROJ-7 | Fotoeinstellungen | P1 | PROJ-1 | Kameraeinstellungen (Blende, ISO, Brennweite …) je Motiv |
 | PROJ-8 | KI-Motiv-Prompt-Generator | P1 | PROJ-1, PROJ-2 (Format abgestimmt mit PROJ-4) | Motivname → strukturierter KI-Prompt → KI-Ausgabe (Motivfelder **+ Saisonphasen**) direkt importierbar |
 
-**Empfohlene Baureihenfolge:** PROJ-1 → PROJ-2 → PROJ-3 → PROJ-4 *(MVP fertig)* → PROJ-5 → PROJ-6 → PROJ-7 → PROJ-8
+**Empfohlene Baureihenfolge:** PROJ-1 → PROJ-2 → PROJ-3 → PROJ-4 *(MVP fertig)* → PROJ-5 → PROJ-7 → PROJ-8 *(PROJ-6 entfällt)*
 
 ## Next Available ID: PROJ-9

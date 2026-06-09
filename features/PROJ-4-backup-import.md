@@ -5,7 +5,7 @@
 **Last Updated:** 2026-06-09
 
 ## Dependencies
-- **PROJ-1** (Motive) — Mindestinhalt. Bezieht weitere Datentypen ein, sobald vorhanden: **PROJ-2** (Saisonphasen), **PROJ-5** (Fotospots), **PROJ-6** (Journal), **PROJ-7** (Fotoeinstellungen).
+- **PROJ-1** (Motive) — Mindestinhalt. Bezieht weitere Datentypen ein, sobald vorhanden: **PROJ-2** (Saisonphasen), **PROJ-5** (Fotospots, inkl. Beobachtungen/Ideen), **PROJ-7** (Fotoeinstellungen).
 
 ## User Stories
 - Als Naturfotograf möchte ich ein Vollbackup meiner gesamten App-Daten als Datei exportieren, damit ich sie sichern und auf ein anderes Gerät übertragen kann.
@@ -16,12 +16,12 @@
 
 ## Export-Arten
 **📦 Vollbackup** (für dich selbst — Sicherung/Geräteumzug)
-- Enthält **alle** App-Daten: Motive, Saisonphasen, Fotospots (GPS), Journal, Fotoeinstellungen (sofern vorhanden).
+- Enthält **alle** App-Daten: Motive, Saisonphasen, Fotospots (inkl. GPS, Beobachtungen & Ideen), Fotoeinstellungen (sofern vorhanden).
 - **Nicht** datenschutzbereinigt.
 
 **🌱 Motivdatenpaket** (zum Teilen / als KI-Importformat für PROJ-8)
 - Enthält **ausgewählte Motive** (Mehrfachauswahl) samt Wissen: Beschreibung, Verhalten, Lebensraum, Fototipps, Ethik, Tags, Quellen, **Saisonphasen**.
-- **Datenschutzbereinigt:** **keine** GPS-Fotospots, **kein** Journal, **keine** privaten Notizen.
+- **Datenschutzbereinigt:** **keine** Fotospots (also keine GPS-Daten, Beobachtungen oder privaten Ideen-Notizen).
 
 ## Import-Verhalten
 **Vollbackup importieren = ersetzen**
@@ -54,7 +54,7 @@ Beide Importe zeigen **vorab eine Vorschau** (z. B. „5 Motive, 12 Saisonphasen
 **Format:** Angenommen [Vorbedingung] / Wenn [Aktion] / Dann [Ergebnis]
 
 - [ ] Angenommen ich habe Daten in der App, wenn ich „Vollbackup exportieren" wähle, dann wird eine JSON-Datei mit allen Daten und Kopfdaten (Typ, Version, Datum) heruntergeladen.
-- [ ] Angenommen ich wähle „Motive exportieren", wenn ich bestimmte Motive auswähle und exportiere, dann enthält die Datei nur deren Wissen + Saisonphasen, **ohne** Spots, Journal und private Notizen.
+- [ ] Angenommen ich wähle „Motive exportieren", wenn ich bestimmte Motive auswähle und exportiere, dann enthält die Datei nur deren Wissen + Saisonphasen, **ohne** Fotospots (keine GPS-Daten, Beobachtungen oder privaten Notizen).
 - [ ] Angenommen ich importiere ein Vollbackup, wenn ich bestätige, dann werden alle aktuellen Daten durch den Backup-Inhalt ersetzt — nach vorheriger Warnung.
 - [ ] Angenommen ich importiere ein Motivpaket, wenn kein Namenskonflikt besteht, dann werden die Motive zur Sammlung hinzugefügt.
 - [ ] Angenommen ein importiertes Motiv hat denselben Namen wie ein bestehendes, wenn der Konflikt auftritt, dann kann ich Überspringen / Duplikat / Ersetzen wählen.
@@ -85,7 +85,7 @@ Beide Importe zeigen **vorab eine Vorschau** (z. B. „5 Motive, 12 Saisonphasen
 | Decision | Rationale | Date |
 |----------|-----------|------|
 | Zwei Export-Arten (Vollbackup / Motivpaket) | Trennt private Komplettsicherung von teilbarem Artenwissen | 2026-06-09 |
-| Datenschutzbereinigt = ohne Spots/Journal/Notizen | Nur allgemeingültiges Wissen wird geteilt | 2026-06-09 |
+| Datenschutzbereinigt = ohne Fotospots (GPS/Beobachtungen/Notizen) | Nur allgemeingültiges Wissen wird geteilt | 2026-06-09 |
 | Vollbackup = ersetzen, Motivpaket = zusammenführen | Snapshot-Restore vs. gezieltes Ergänzen | 2026-06-09 |
 | Namenskonflikt: Überspringen/Duplikat/Ersetzen | Volle Kontrolle beim Zusammenführen | 2026-06-09 |
 | Versioniertes JSON + harte Importprüfung | Zukunftssicher; kein Datenverlust bei Fehlern | 2026-06-09 |
