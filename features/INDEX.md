@@ -19,7 +19,7 @@
 | PROJ-2 | Saisonphasen | Planned | [Spec](PROJ-2-saisonphasen.md) | 2026-06-09 |
 | PROJ-3 | Kalender | Planned | [Spec](PROJ-3-kalender.md) | 2026-06-09 |
 | PROJ-4 | Backup/Import | Planned | [Spec](PROJ-4-backup-import.md) | 2026-06-09 |
-| PROJ-5 | Fotospots | Roadmap | — | 2026-06-09 |
+| PROJ-5 | Fotospots | Planned | [Spec](PROJ-5-fotospots.md) | 2026-06-09 |
 | PROJ-6 | Journal | Roadmap | — | 2026-06-09 |
 | PROJ-7 | Fotoeinstellungen | Roadmap | — | 2026-06-09 |
 | PROJ-8 | KI-Motiv-Prompt-Generator | Roadmap | — | 2026-06-09 |
