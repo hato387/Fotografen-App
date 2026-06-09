@@ -15,7 +15,7 @@
 
 | ID | Feature | Status | Spec | Created |
 |----|---------|--------|------|---------|
-| PROJ-1 | Motive-Datenbank | In Progress | [Spec](PROJ-1-motive-datenbank.md) | 2026-06-09 |
+| PROJ-1 | Motive-Datenbank | In Review | [Spec](PROJ-1-motive-datenbank.md) | 2026-06-09 |
 | PROJ-2 | Saisonphasen | Planned | [Spec](PROJ-2-saisonphasen.md) | 2026-06-09 |
 | PROJ-3 | Kalender | Planned | [Spec](PROJ-3-kalender.md) | 2026-06-09 |
 | PROJ-4 | Backup/Import | Planned | [Spec](PROJ-4-backup-import.md) | 2026-06-09 |
