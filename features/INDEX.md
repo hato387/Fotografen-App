@@ -17,7 +17,7 @@
 |----|---------|--------|------|---------|
 | PROJ-1 | Motive-Datenbank | Planned | [Spec](PROJ-1-motive-datenbank.md) | 2026-06-09 |
 | PROJ-2 | Saisonphasen | Planned | [Spec](PROJ-2-saisonphasen.md) | 2026-06-09 |
-| PROJ-3 | Kalender | Roadmap | — | 2026-06-09 |
+| PROJ-3 | Kalender | Planned | [Spec](PROJ-3-kalender.md) | 2026-06-09 |
 | PROJ-4 | Backup/Import | Roadmap | — | 2026-06-09 |
 | PROJ-5 | Fotospots | Roadmap | — | 2026-06-09 |
 | PROJ-6 | Journal | Roadmap | — | 2026-06-09 |

@@ -20,6 +20,7 @@
 - **End-KW** (Pflicht, 1–53)
 - **Region** (optional, Freitext): z. B. „Süddeutschland", „bundesweit"
 - **Konfidenz** (Pflicht, Standard „mittel"): niedrig / mittel / hoch
+- **Höhepunkt** (optional, Ja/Nein, Standard Nein): markiert die beste Zeit (z. B. Brutzeit). Dient als Kalender-Filter in PROJ-3.
 - **Notiz** (optional, Freitext)
 
 **Zeitlogik:** Kalenderwochen sind **zyklisch, ohne Jahr** (nach KW 52/53 folgt KW 1). Start-KW > End-KW ⇒ Phase läuft über den Jahreswechsel (z. B. KW 48 → KW 6).
@@ -44,6 +45,7 @@
 - [ ] Angenommen ich gebe eine KW außerhalb 1–53 ein, wenn ich speichere, dann wird die Eingabe abgelehnt und ein Hinweis auf den gültigen Bereich angezeigt.
 - [ ] Angenommen Start-KW ist größer als End-KW, wenn ich speichere, dann wird die Phase als Jahresübergang akzeptiert (kein Fehler).
 - [ ] Angenommen ich gebe keine Konfidenz an, wenn ich eine Phase anlege, dann ist „mittel" vorausgewählt.
+- [ ] Angenommen ich markiere eine Phase als „Höhepunkt", wenn ich sie speichere, dann ist diese Markierung gespeichert und später im Kalender (PROJ-3) filterbar.
 - [ ] Angenommen eine Phase existiert, wenn ich sie bearbeite und speichere, dann werden die Änderungen in der Phasenliste angezeigt.
 - [ ] Angenommen eine Phase existiert, wenn ich auf „Löschen" klicke, dann muss ich kurz bestätigen, bevor sie entfernt wird.
 - [ ] Angenommen ich gebe bei der KW-Eingabe eine Woche ein, wenn das Feld angezeigt wird, dann sehe ich den zugehörigen Monat zur Orientierung.
@@ -62,7 +64,7 @@
 - KW→Monat-Zuordnung als Anzeige-Hilfe (Näherung, da KW jahresabhängig leicht variiert)
 
 ## Open Questions
-- [ ] „Relevanz" (im Kalender-Filter genannt) — ist das eine Eigenschaft des Motivs oder der Phase? → in PROJ-3 klären.
+- [x] „Relevanz" geklärt (2026-06-09): Kein eigenes Feld. „Ist jetzt eine gute Zeit?" wird im Kalender (PROJ-3) aus Status (Aktiv/Bevorstehend) + Konfidenz abgeleitet. Zusätzlich markiert das neue **Höhepunkt**-Häkchen die besten Phasen.
 
 ## Decision Log
 
@@ -75,6 +77,7 @@
 | Region als Freitext | Flexibler als feste Liste für persönliche Nutzung | 2026-06-09 |
 | Überlappende Phasen erlaubt | Reale Biologie überlappt (Balz/Brut); Nutzer nicht gängeln | 2026-06-09 |
 | Verwaltung in Motiv-Detailansicht | Wissen + Zeitfenster an einem Ort, klarer Kontext | 2026-06-09 |
+| „Relevanz" nicht als Feld; „Höhepunkt"-Häkchen je Phase stattdessen | „Gute Zeit jetzt" ist aus Status+Konfidenz ableitbar; Höhepunkt markiert gezielt Top-Phasen ohne redundantes Relevanz-Feld | 2026-06-09 |
 
 ### Technical Decisions
 <!-- Added by /architecture -->
