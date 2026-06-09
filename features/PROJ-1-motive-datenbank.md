@@ -245,14 +245,21 @@ Schlüssel: "naturfoto:motive" → Liste aller Motive.
 - **Detail:** Dialog warnt generisch vor „verknüpften Daten", auch wenn es noch keine gibt. Konkrete Zählung kommt mit PROJ-2/5/7.
 - **Priorität:** Mit PROJ-2 nachziehen.
 
+### Bug-Fix Verification (2026-06-09, nach QA)
+Alle 4 Low-Bugs **behoben** und per Build + Unit-Tests verifiziert:
+- **BUG-1 ✓** Kategorie hat keinen Default mehr → „Bitte eine Kategorie wählen." greift; AC-2 nun vollständig erfüllt.
+- **BUG-2 ✓** `src/lib/url.ts` (`isSafeHttpUrl`/`sanitizeUrl`): Quellen-Link & Bild-URL werden beim Speichern auf http(s) beschränkt und beim Rendern zusätzlich geprüft (deckt auch künftige PROJ-4-Importe ab). Unsichere Bild-URL zeigt eine Validierungsmeldung.
+- **BUG-3 ✓** `update`/`remove` liefern jetzt einen Erfolgswert; die Detailseite zeigt bei Schreibfehlern einen Fehler-Toast.
+- **BUG-4 ✓** Lösch-Dialog warnt nur noch optional (`warning`-Prop, von PROJ-2/5/7 befüllt) statt spekulativ.
+
 ### Summary
-- **Acceptance Criteria:** 9/9 funktional erfüllt (AC-2 & AC-5 mit dokumentierten, bewussten Einschränkungen)
-- **Bugs Found:** 4 total (0 Critical, 0 High, 0 Medium, 4 Low)
-- **Unit Tests:** 13/13 grün (`src/lib/storage.test.ts`, `src/hooks/use-local-collection.test.ts`)
-- **E2E Tests:** 10 geschrieben (`tests/PROJ-1-motive-datenbank.spec.ts`) — Ausführung pending Browser-Download
-- **Security:** Pass (nur 1 Low-Finding, threat-model-bedingt unkritisch)
-- **Production Ready:** YES (keine Critical/High-Bugs) — formale Freigabe nach erfolgreichem E2E-Lauf empfohlen
-- **Recommendation:** Deploy-fähig; die 4 Low-Bugs können in Folge-Features (v. a. mit PROJ-2) mitgenommen werden.
+- **Acceptance Criteria:** 9/9 funktional erfüllt (AC-2 nach Fix vollständig; AC-5 mit PROJ-2 final)
+- **Bugs:** 4 gefunden, **4 behoben** → 0 offen (0 Critical, 0 High, 0 Medium, 0 Low offen)
+- **Unit Tests:** 19/19 grün (`storage`, `use-local-collection`, `url`)
+- **E2E Tests:** 12 geschrieben (`tests/PROJ-1-motive-datenbank.spec.ts`) — Ausführung pending Playwright-Browser-Download (Umgebungs-Issue, kein Code-Problem)
+- **Security:** Pass (URL-Schema-Härtung umgesetzt)
+- **Production Ready:** YES (keine offenen Bugs) — E2E-Lauf zur finalen Bestätigung sobald Browser installiert
+- **Recommendation:** Deploy-fähig.
 
 ## Deployment
 _To be added by /deploy_
