@@ -1,6 +1,6 @@
 # PROJ-1: Motive-Datenbank
 
-## Status: Architected
+## Status: In Progress
 **Created:** 2026-06-09
 **Last Updated:** 2026-06-09
 
@@ -94,6 +94,24 @@
 | react-hook-form + Zod fürs Formular | Bereits im Stack; saubere Pflichtfeld-Validierung | 2026-06-09 |
 | Motiv-Detail als eigene Route `/motive/[id]` | Deep-Links aus Kalender (PROJ-3) und Fotospots (PROJ-5) + sauberer Zurück-Knopf | 2026-06-09 |
 | Motive-Übersicht als Startseite `/motive` | Motive sind das Fundament der App | 2026-06-09 |
+
+---
+
+## Implementation Notes (Frontend)
+**Stand 2026-06-09 — UI implementiert, Build grün.**
+
+Neu angelegt:
+- **Theme:** `src/app/globals.css` auf naturnahes Theme umgestellt (Moosgrün/Erdton, Hell/Dunkel); Inter-Font in `layout.tsx` + `tailwind.config.ts`.
+- **Datenmodell/Speicher:** `src/lib/types.ts` (Motiv, Kategorie, Quelle), `src/lib/storage.ts` (versionierte localStorage-Schicht, `naturfoto:`-Schlüssel, `createId`), `src/lib/kategorie.ts` (Kategorie-Symbole/Farben).
+- **Hooks:** `src/hooks/use-local-collection.ts` (generisch, wiederverwendbar für PROJ-2/5/7), `src/hooks/use-motive.ts`.
+- **App-Grundgerüst:** `src/components/main-nav.tsx` (Navigation; künftige Bereiche deaktiviert sichtbar), `theme-provider.tsx`, `theme-toggle.tsx` (Hell/Dunkel via next-themes).
+- **Motiv-UI:** `src/components/motive/` — `motiv-card.tsx`, `motiv-form-dialog.tsx` (react-hook-form + Zod, Tags-Input, dynamische Quellen), `motiv-delete-dialog.tsx`, `kategorie-badge.tsx`.
+- **Seiten:** `/` → Redirect auf `/motive`; `/motive` (Übersicht: Suche, Kategoriefilter, Karten-Raster, Leerzustand); `/motive/[id]` (Detail mit Bearbeiten/Löschen).
+
+Abweichungen/Hinweise:
+- Bild-Links werden bewusst als `<img>` (nicht `next/image`) gerendert, da beliebige externe Hosts erlaubt sind; bei Ladefehler erscheint ein Platzhalter (deckt Edge Case „toter Bild-Link" ab).
+- Lösch-Dialog warnt bereits generisch vor verknüpften Daten; die konkrete Zählung folgt mit PROJ-2/5/7.
+- Kein Backend (reines localStorage) → nächster Schritt ist QA, nicht `/backend`.
 
 ---
 <!-- Sections below are added by subsequent skills -->

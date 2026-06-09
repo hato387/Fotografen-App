@@ -1,0 +1,100 @@
+"use client";
+
+import { useCallback, useEffect, useState } from "react";
+import {
+  CollectionKey,
+  createId,
+  readCollection,
+  storageKey,
+  writeCollection,
+} from "@/lib/storage";
+
+/** Minimaler gemeinsamer Nenner aller Datensätze. */
+interface Entity {
+  id: string;
+}
+
+export interface UseCollectionResult<T extends Entity> {
+  items: T[];
+  /** false bis localStorage gelesen wurde (vermeidet Hydration-Mismatch). */
+  loaded: boolean;
+  /** Letzter Schreibfehler (z. B. Speicher voll) oder null. */
+  error: string | null;
+  getById: (id: string) => T | undefined;
+  add: (data: Omit<T, "id">) => T | null;
+  update: (id: string, patch: Partial<Omit<T, "id">>) => void;
+  remove: (id: string) => void;
+}
+
+/**
+ * Liest/schreibt eine localStorage-Collection und hält die Oberfläche aktuell.
+ * Wiederverwendbar für alle Datenarten (Motive, später Saisonphasen, Spots …).
+ */
+export function useLocalCollection<T extends Entity>(
+  collection: CollectionKey,
+): UseCollectionResult<T> {
+  const [items, setItems] = useState<T[]>([]);
+  const [loaded, setLoaded] = useState(false);
+  const [error, setError] = useState<string | null>(null);
+
+  // Erstes Laden + Reaktion auf Änderungen aus anderen Tabs.
+  useEffect(() => {
+    setItems(readCollection<T>(collection));
+    setLoaded(true);
+
+    const onStorage = (e: StorageEvent) => {
+      if (e.key === storageKey(collection)) {
+        setItems(readCollection<T>(collection));
+      }
+    };
+    window.addEventListener("storage", onStorage);
+    return () => window.removeEventListener("storage", onStorage);
+  }, [collection]);
+
+  const persist = useCallback(
+    (next: T[]): boolean => {
+      try {
+        writeCollection<T>(collection, next);
+        setItems(next);
+        setError(null);
+        return true;
+      } catch {
+        setError(
+          "Speichern fehlgeschlagen — der lokale Speicher ist möglicherweise voll.",
+        );
+        return false;
+      }
+    },
+    [collection],
+  );
+
+  const getById = useCallback(
+    (id: string) => items.find((it) => it.id === id),
+    [items],
+  );
+
+  const add = useCallback(
+    (data: Omit<T, "id">): T | null => {
+      const entity = { ...data, id: createId() } as T;
+      const ok = persist([...items, entity]);
+      return ok ? entity : null;
+    },
+    [items, persist],
+  );
+
+  const update = useCallback(
+    (id: string, patch: Partial<Omit<T, "id">>) => {
+      persist(items.map((it) => (it.id === id ? { ...it, ...patch } : it)));
+    },
+    [items, persist],
+  );
+
+  const remove = useCallback(
+    (id: string) => {
+      persist(items.filter((it) => it.id !== id));
+    },
+    [items, persist],
+  );
+
+  return { items, loaded, error, getById, add, update, remove };
+}
