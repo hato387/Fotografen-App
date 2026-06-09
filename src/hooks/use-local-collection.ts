@@ -22,8 +22,10 @@ export interface UseCollectionResult<T extends Entity> {
   error: string | null;
   getById: (id: string) => T | undefined;
   add: (data: Omit<T, "id">) => T | null;
-  update: (id: string, patch: Partial<Omit<T, "id">>) => void;
-  remove: (id: string) => void;
+  /** true bei Erfolg, false bei Schreibfehler (z. B. Speicher voll). */
+  update: (id: string, patch: Partial<Omit<T, "id">>) => boolean;
+  /** true bei Erfolg, false bei Schreibfehler. */
+  remove: (id: string) => boolean;
 }
 
 /**
@@ -83,16 +85,14 @@ export function useLocalCollection<T extends Entity>(
   );
 
   const update = useCallback(
-    (id: string, patch: Partial<Omit<T, "id">>) => {
-      persist(items.map((it) => (it.id === id ? { ...it, ...patch } : it)));
-    },
+    (id: string, patch: Partial<Omit<T, "id">>): boolean =>
+      persist(items.map((it) => (it.id === id ? { ...it, ...patch } : it))),
     [items, persist],
   );
 
   const remove = useCallback(
-    (id: string) => {
-      persist(items.filter((it) => it.id !== id));
-    },
+    (id: string): boolean =>
+      persist(items.filter((it) => it.id !== id)),
     [items, persist],
   );
 

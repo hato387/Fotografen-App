@@ -15,6 +15,7 @@ import { Badge } from "@/components/ui/badge";
 import { Button } from "@/components/ui/button";
 import { Skeleton } from "@/components/ui/skeleton";
 import { useMotive } from "@/hooks/use-motive";
+import { isSafeHttpUrl } from "@/lib/url";
 
 export default function MotivDetailPage() {
   const params = useParams<{ id: string }>();
@@ -49,18 +50,29 @@ export default function MotivDetailPage() {
   }
 
   const handleUpdate = (input: MotivInput) => {
-    update(motiv.id, { ...input, geaendertAm: new Date().toISOString() });
-    toast.success("Änderungen gespeichert.");
+    const ok = update(motiv.id, {
+      ...input,
+      geaendertAm: new Date().toISOString(),
+    });
+    if (ok) toast.success("Änderungen gespeichert.");
+    else
+      toast.error(
+        "Speichern fehlgeschlagen — der lokale Speicher ist möglicherweise voll.",
+      );
   };
 
   const handleDelete = () => {
     const name = motiv.name;
-    remove(motiv.id);
+    const ok = remove(motiv.id);
+    if (!ok) {
+      toast.error("Löschen fehlgeschlagen — bitte erneut versuchen.");
+      return;
+    }
     toast.success(`Motiv „${name}" gelöscht.`);
     router.push("/motive");
   };
 
-  const showImage = motiv.bildUrl && !imgError;
+  const showImage = isSafeHttpUrl(motiv.bildUrl) && !imgError;
   const hasContent = Boolean(
     motiv.beschreibung ||
       motiv.verhalten ||
@@ -121,7 +133,7 @@ export default function MotivDetailPage() {
           />
         </div>
       )}
-      {motiv.bildUrl && imgError && (
+      {isSafeHttpUrl(motiv.bildUrl) && imgError && (
         <div className="flex items-center gap-2 rounded-2xl border border-dashed p-4 text-sm text-muted-foreground">
           <ImageOff className="h-4 w-4" /> Bild-Link konnte nicht geladen werden.
         </div>
@@ -144,7 +156,7 @@ export default function MotivDetailPage() {
                 <ul className="space-y-1.5">
                   {motiv.quellen.map((q, i) => (
                     <li key={i}>
-                      {q.link ? (
+                      {isSafeHttpUrl(q.link) ? (
                         <a
                           href={q.link}
                           target="_blank"

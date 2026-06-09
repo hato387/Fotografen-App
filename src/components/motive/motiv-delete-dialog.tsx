@@ -17,9 +17,20 @@ interface Props {
   onOpenChange: (open: boolean) => void;
   motiv: Motiv | null;
   onConfirm: () => void;
+  /**
+   * Optionaler Warnhinweis zu verknüpften Daten (z. B. „3 Saisonphasen").
+   * Wird erst von PROJ-2/5/7 befüllt; ohne Wert keine spekulative Warnung.
+   */
+  warning?: string;
 }
 
-export function MotivDeleteDialog({ open, onOpenChange, motiv, onConfirm }: Props) {
+export function MotivDeleteDialog({
+  open,
+  onOpenChange,
+  motiv,
+  onConfirm,
+  warning,
+}: Props) {
   return (
     <AlertDialog open={open} onOpenChange={onOpenChange}>
       <AlertDialogContent>
@@ -28,9 +39,8 @@ export function MotivDeleteDialog({ open, onOpenChange, motiv, onConfirm }: Prop
             Motiv „{motiv?.name}" wirklich löschen?
           </AlertDialogTitle>
           <AlertDialogDescription>
-            Diese Aktion kann nicht rückgängig gemacht werden. Verknüpfte Daten
-            (z. B. Saisonphasen) werden mitgelöscht, sobald solche Funktionen
-            verfügbar sind.
+            Diese Aktion kann nicht rückgängig gemacht werden.
+            {warning ? ` ${warning}` : ""}
           </AlertDialogDescription>
         </AlertDialogHeader>
         <AlertDialogFooter>

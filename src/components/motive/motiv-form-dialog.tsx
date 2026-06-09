@@ -34,6 +34,7 @@ import {
 } from "@/components/ui/select";
 import { Textarea } from "@/components/ui/textarea";
 import { KATEGORIEN, Kategorie, Motiv, Quelle } from "@/lib/types";
+import { isSafeHttpUrl, sanitizeUrl } from "@/lib/url";
 
 /** Bereinigte Eingabedaten eines Motivs (ohne id/Zeitstempel). */
 export interface MotivInput {
@@ -59,7 +60,11 @@ const formSchema = z.object({
   lebensraum: z.string(),
   fototipps: z.string(),
   ethikhinweise: z.string(),
-  bildUrl: z.string(),
+  bildUrl: z
+    .string()
+    .refine((v) => v.trim() === "" || isSafeHttpUrl(v.trim()), {
+      message: "Bitte eine vollständige http(s)-Adresse angeben.",
+    }),
   tags: z.array(z.string()),
   quellen: z.array(
     z.object({ titel: z.string(), link: z.string() }),
@@ -71,7 +76,8 @@ type FormValues = z.infer<typeof formSchema>;
 function emptyValues(): FormValues {
   return {
     name: "",
-    kategorie: "Tier",
+    // Bewusst leer: erzwingt eine aktive Auswahl (Validierung greift).
+    kategorie: "" as Kategorie,
     beschreibung: "",
     verhalten: "",
     lebensraum: "",
@@ -138,10 +144,10 @@ export function MotivFormDialog({ open, onOpenChange, motiv, onSubmit }: Props) 
       lebensraum: clean(values.lebensraum),
       fototipps: clean(values.fototipps),
       ethikhinweise: clean(values.ethikhinweise),
-      bildUrl: clean(values.bildUrl),
+      bildUrl: sanitizeUrl(values.bildUrl),
       tags: values.tags,
       quellen: values.quellen
-        .map((q) => ({ titel: q.titel.trim(), link: clean(q.link) }))
+        .map((q) => ({ titel: q.titel.trim(), link: sanitizeUrl(q.link) }))
         .filter((q) => q.titel.length > 0),
     };
     onSubmit(input);

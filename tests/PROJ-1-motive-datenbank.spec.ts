@@ -6,16 +6,15 @@ import { expect, test } from "@playwright/test";
 async function createMotiv(
   page: import("@playwright/test").Page,
   name: string,
-  kategorie?: "Tier" | "Pflanze" | "Landschaft",
+  kategorie: "Tier" | "Pflanze" | "Landschaft" = "Tier",
 ) {
   await page.getByRole("button", { name: "Neues Motiv" }).click();
   const dialog = page.getByRole("dialog");
   await expect(dialog).toBeVisible();
   await dialog.getByLabel("Name *").fill(name);
-  if (kategorie && kategorie !== "Tier") {
-    await dialog.getByRole("combobox").click();
-    await page.getByRole("option", { name: kategorie }).click();
-  }
+  // Kategorie ist Pflicht und hat keinen Default → immer aktiv wählen.
+  await dialog.getByRole("combobox").click();
+  await page.getByRole("option", { name: kategorie }).click();
   await dialog.getByRole("button", { name: "Speichern" }).click();
   await expect(dialog).not.toBeVisible();
 }
@@ -46,6 +45,31 @@ test("verhindert das Speichern ohne Namen und zeigt eine Validierungsmeldung", a
   await dialog.getByRole("button", { name: "Speichern" }).click();
   await expect(dialog.getByText("Name ist ein Pflichtfeld.")).toBeVisible();
   await expect(dialog).toBeVisible(); // Dialog bleibt offen
+});
+
+test("verlangt eine Kategorie-Auswahl", async ({ page }) => {
+  await page.getByRole("button", { name: "Neues Motiv" }).click();
+  const dialog = page.getByRole("dialog");
+  await dialog.getByLabel("Name *").fill("Ohne Kategorie");
+  await dialog.getByRole("button", { name: "Speichern" }).click();
+  await expect(dialog.getByText("Bitte eine Kategorie wählen.")).toBeVisible();
+  await expect(dialog).toBeVisible();
+});
+
+test("weist eine unsichere Bild-URL ab", async ({ page }) => {
+  await page.getByRole("button", { name: "Neues Motiv" }).click();
+  const dialog = page.getByRole("dialog");
+  await dialog.getByLabel("Name *").fill("Eisvogel");
+  await dialog.getByRole("combobox").click();
+  await page.getByRole("option", { name: "Tier" }).click();
+  await dialog
+    .getByPlaceholder("https://… (optionales Vorschaubild)")
+    .fill("javascript:alert(1)");
+  await dialog.getByRole("button", { name: "Speichern" }).click();
+  await expect(
+    dialog.getByText("Bitte eine vollständige http(s)-Adresse angeben."),
+  ).toBeVisible();
+  await expect(dialog).toBeVisible();
 });
 
 test("bearbeitet ein Motiv und zeigt die Änderung", async ({ page }) => {

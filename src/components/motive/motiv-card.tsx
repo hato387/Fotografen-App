@@ -7,12 +7,13 @@ import { Card } from "@/components/ui/card";
 import { KategorieBadge } from "@/components/motive/kategorie-badge";
 import { KATEGORIE_META } from "@/lib/kategorie";
 import { Motiv } from "@/lib/types";
+import { isSafeHttpUrl } from "@/lib/url";
 import { cn } from "@/lib/utils";
 
 export function MotivCard({ motiv }: { motiv: Motiv }) {
   const [imgError, setImgError] = useState(false);
   const meta = KATEGORIE_META[motiv.kategorie];
-  const showImage = motiv.bildUrl && !imgError;
+  const showImage = isSafeHttpUrl(motiv.bildUrl) && !imgError;
 
   return (
     <Link href={`/motive/${motiv.id}`} className="group block">
