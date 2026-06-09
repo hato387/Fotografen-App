@@ -10,7 +10,7 @@ Ambitionierter Hobby-Naturfotograf (Einzelnutzer). **Pain Point heute:** Wissen 
 
 | Priority | Feature | Status |
 |----------|---------|--------|
-| P0 (MVP) | Motive-Datenbank | Roadmap |
+| P0 (MVP) | Motive-Datenbank | Planned |
 | P0 (MVP) | Saisonphasen je Motiv | Roadmap |
 | P0 (MVP) | Kalender (Woche + Jahres-Timeline, filterbar) | Roadmap |
 | P0 (MVP) | Backup/Import (JSON) | Roadmap |
