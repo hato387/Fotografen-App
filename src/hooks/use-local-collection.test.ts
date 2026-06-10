@@ -73,6 +73,25 @@ describe("useLocalCollection", () => {
     expect(result.current.items).toHaveLength(0);
   });
 
+  it("entfernt mehrere Elemente per removeWhere (Kaskade)", async () => {
+    const { result } = await renderLoaded();
+    act(() => {
+      result.current.add({ name: "behalten" });
+    });
+    act(() => {
+      result.current.add({ name: "weg" });
+    });
+    act(() => {
+      result.current.add({ name: "weg" });
+    });
+    expect(result.current.items).toHaveLength(3);
+    act(() => {
+      result.current.removeWhere((it) => it.name === "weg");
+    });
+    expect(result.current.items).toHaveLength(1);
+    expect(result.current.items[0].name).toBe("behalten");
+  });
+
   it("persistiert über eine neue Hook-Instanz hinweg (localStorage)", async () => {
     const first = await renderLoaded();
     act(() => {

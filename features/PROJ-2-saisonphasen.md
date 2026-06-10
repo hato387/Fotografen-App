@@ -1,6 +1,6 @@
 # PROJ-2: Saisonphasen
 
-## Status: In Progress
+## Status: Approved
 **Created:** 2026-06-09
 **Last Updated:** 2026-06-09
 
@@ -162,7 +162,47 @@ Gespeichert in: localStorage, Schlüssel "naturfoto:saisonphasen"
 **Keine neuen Pakete.** Vorhanden: shadcn/ui (dialog, select, switch, badge, button, label, input, textarea), `useLocalCollection` und das Motiv-Detail-Gerüst aus PROJ-1.
 
 ## QA Test Results
-_To be added by /qa_
+
+**Tested:** 2026-06-09
+**App URL:** http://localhost:3000
+**Tester:** QA Engineer (AI)
+**Methode:** Code-Review aller Akzeptanzkriterien + Unit-Tests (Vitest) + E2E-Tests (Playwright, gegen System-Edge via `playwright.edge.config.ts`).
+
+### Acceptance Criteria Status
+- [x] Phase anlegen (Start-/End-KW + Konfidenz) → erscheint in der Phasenliste des Motivs
+- [x] Start/End-KW sind Pflicht (Auswahl 1–53; Default KW 1) — ungültige Werte über die Auswahl gar nicht möglich
+- [x] KW außerhalb 1–53 nicht eingebbar (Select statt Freitext → Validierungspfad konstruktiv ausgeschlossen)
+- [x] Start > End → als Jahresübergang akzeptiert + Hinweis im Formular
+- [x] Default-Konfidenz „mittel"
+- [x] Phase bearbeiten → Änderung sichtbar
+- [x] Phase löschen → kurzer Bestätigungsdialog
+- [x] Monat zur Orientierung neben KW (Auswahl „KW n · Monat", Liste „KW a–b (Mon–Mon)")
+- [x] Leerzustand bei 0 Phasen
+
+### Edge Cases Status
+- [x] Einzelne Woche (Start = End) zulässig
+- [x] Jahresübergang (Start > End) korrekt + Hinweis
+- [x] Überlappende Phasen erlaubt (kein Block)
+- [x] KW 53 wählbar
+- [x] Motiv ohne Phasen → Leerzustand
+- [x] Motiv gelöscht → zugehörige Phasen werden kaskadiert mitgelöscht; Lösch-Dialog zeigt die Anzahl
+
+### Security Audit Results
+- [x] Kein Backend/Auth (lokal, Single-User)
+- [x] Freitexte (Bezeichnung/Region/Notiz) React-escaped; keine neuen URL-Eingaben
+- [x] Keine Secrets
+
+### Bugs Found
+Keine.
+
+### Summary
+- **Acceptance Criteria:** alle erfüllt
+- **Bugs:** 0 (0 Critical/High/Medium/Low)
+- **Unit Tests:** 27/27 grün (inkl. `kw`-Helfer + `removeWhere`)
+- **E2E Tests:** 19/19 grün (12 PROJ-1 + 7 PROJ-2; via System-Edge) — keine Regressionen
+- **Security:** Pass
+- **Production Ready:** YES
+- **Recommendation:** Deploy-fähig.
 
 ## Deployment
 _To be added by /deploy_
