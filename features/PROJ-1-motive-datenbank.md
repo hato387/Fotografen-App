@@ -1,6 +1,6 @@
 # PROJ-1: Motive-Datenbank
 
-## Status: In Progress
+## Status: Approved
 **Created:** 2026-06-09
 **Last Updated:** 2026-06-09
 
@@ -256,10 +256,12 @@ Alle 4 Low-Bugs **behoben** und per Build + Unit-Tests verifiziert:
 - **Acceptance Criteria:** 9/9 funktional erfüllt (AC-2 nach Fix vollständig; AC-5 mit PROJ-2 final)
 - **Bugs:** 4 gefunden, **4 behoben** → 0 offen (0 Critical, 0 High, 0 Medium, 0 Low offen)
 - **Unit Tests:** 19/19 grün (`storage`, `use-local-collection`, `url`)
-- **E2E Tests:** 12 geschrieben (`tests/PROJ-1-motive-datenbank.spec.ts`) — Ausführung pending Playwright-Browser-Download (Umgebungs-Issue, kein Code-Problem)
+- **E2E Tests:** 12/12 grün (`tests/PROJ-1-motive-datenbank.spec.ts`)
 - **Security:** Pass (URL-Schema-Härtung umgesetzt)
-- **Production Ready:** YES (keine offenen Bugs) — E2E-Lauf zur finalen Bestätigung sobald Browser installiert
+- **Production Ready:** YES — keine offenen Bugs, alle Tests grün
 - **Recommendation:** Deploy-fähig.
+
+> **Hinweis zur E2E-Ausführung:** Der Playwright-Browser-Download (v1208) ließ sich in dieser Umgebung nicht abschließen (Netzwerk; zudem installierte `npx playwright install` eine abweichende Revision v1223). Die E2E-Suite wurde daher gegen das **System-Edge** ausgeführt: `npx playwright test --config=playwright.edge.config.ts` (nutzt `channel: msedge`, kein Download nötig). Sobald der reguläre Chromium-Download klappt, läuft auch `npm run test:e2e`.
 
 ## Deployment
 _To be added by /deploy_

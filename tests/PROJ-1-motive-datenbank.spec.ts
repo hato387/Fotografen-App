@@ -130,6 +130,8 @@ test("zeigt eine Quelle mit Link in der Detailansicht klickbar an", async ({
   await page.getByRole("button", { name: "Neues Motiv" }).click();
   const dialog = page.getByRole("dialog");
   await dialog.getByLabel("Name *").fill("Eisvogel");
+  await dialog.getByRole("combobox").click();
+  await page.getByRole("option", { name: "Tier" }).click();
   await dialog.getByRole("button", { name: "Quelle hinzufügen" }).click();
   await dialog.getByPlaceholder("Titel (z. B. NABU-Portal)").fill("NABU");
   await dialog
