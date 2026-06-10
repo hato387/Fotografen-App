@@ -49,3 +49,21 @@ export interface Saisonphase {
   erstelltAm: string; // ISO-Datum
   geaendertAm: string; // ISO-Datum
 }
+
+/**
+ * Ein Fotospot (PROJ-5) — vereint Ort + Beobachtungen/Ideen.
+ * GPS optional; verknüpfte Motive lose über IDs.
+ */
+export interface Fotospot {
+  id: string;
+  name: string;
+  lat?: number;
+  lng?: number;
+  motivIds: string[];
+  beobachtungen?: string;
+  besteZeit?: string;
+  tags: string[];
+  bildUrl?: string;
+  erstelltAm: string;
+  geaendertAm: string;
+}

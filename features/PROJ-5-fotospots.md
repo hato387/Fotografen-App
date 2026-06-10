@@ -1,6 +1,6 @@
 # PROJ-5: Fotospots
 
-## Status: Planned
+## Status: Approved
 **Created:** 2026-06-09
 **Last Updated:** 2026-06-09
 
@@ -93,15 +93,95 @@
 <!-- Added by /architecture -->
 | Decision | Rationale | Date |
 |----------|-----------|------|
+| Eigene Collection `naturfoto:fotospots`; Navigation aktiviert | Wiederverwendung der Speicher-Schicht | 2026-06-09 |
+| Übersicht + Detailroute `/fotospots/[id]` + Formular-Dialog (wie Motive) | Konsistente UX, Deep-Links | 2026-06-09 |
+| Verknüpfte Motive als IDs (`motivIds`) | Lose Kopplung; Motiv-Löschen entfernt Verknüpfung beim Anzeigen | 2026-06-09 |
+| Geo-Helfer in `src/lib/geo.ts` (Validierung + externer Karten-Link) | Keine Karten-Bibliothek; testbar | 2026-06-09 |
+| Motiv-Mehrfachauswahl via Popover + Command | Suchbare Auswahl, skaliert mit vielen Motiven | 2026-06-09 |
 
 ---
 <!-- Sections below are added by subsequent skills -->
 
 ## Tech Design (Solution Architect)
-_To be added by /architecture_
+
+### A) Komponentenstruktur
+```
+Seite „Fotospots" (/fotospots) — NEU, Navigation aktiviert
+├── Kopf: Titel + „Neuer Fotospot"
+├── Textsuche
+├── Karten-Raster: Name · Beobachtungs-Auszug · verknüpfte Motive · Tags · „Karte öffnen"
+└── Leerzustand
+
+Seite „Fotospot-Detail" (/fotospots/[id])
+├── Name + „Auf Karte öffnen" (falls Koordinaten)
+├── Verknüpfte Motive (Chips → /motive/[id])
+├── Beobachtungen & Ideen · Beste Zeit
+└── Bearbeiten / Löschen
+
+Fotospot-Formular (Dialog, Anlegen & Bearbeiten):
+Name* · lat/lng (optional) · Motiv-Mehrfachauswahl · Beobachtungen
+· Beste Zeit · Tags · Bild-Link
+```
+
+### B) Datenmodell (ein Fotospot)
+```
+- id, name (Pflicht)
+- lat?, lng?  (optional; validiert -90..90 / -180..180)
+- motivIds: string[]  (verknüpfte Motive)
+- beobachtungen?  (Freitext)
+- besteZeit?      (Freitext)
+- tags: string[]
+- bildUrl?        (nur http(s))
+- erstelltAm / geaendertAm
+
+Gespeichert in: localStorage "naturfoto:fotospots".
+NICHT Teil geteilter Motivpakete (Datenschutz).
+```
+
+### C) Tech-Entscheidungen
+| Entscheidung | Warum |
+|--------------|-------|
+| Eigene Collection + Detailroute | Konsistenz mit Motive; Deep-Links |
+| `motivIds`-Verknüpfung | Lose Kopplung; robust bei Motiv-Löschung |
+| Geo-Helfer (Validierung + Karten-Link) | Lokal, keine Karten-Lib |
+| Popover+Command Mehrfachauswahl | Suchbar, skaliert |
+
+### D) Abhängigkeiten
+**Keine neuen Pakete.** shadcn/ui (command, popover, checkbox, dialog, input, textarea, badge, button) + bestehende Hooks.
+
+## Implementation Notes (Frontend)
+**Stand 2026-06-09 — UI implementiert, Build grün.**
+
+Neu: Collection `naturfoto:fotospots` + `Fotospot`-Typ; `useFotospots`; `src/lib/geo.ts` (Validierung lat/lng, `parseCoord` mit Komma-Toleranz, OSM-`mapUrl`); Komponenten `src/components/fotospots/` (Formular-Dialog mit Koordinaten-Validierung & Bild-URL-Härtung, `MotivMultiSelect` via Popover+Command, Karte); ausgelagerter `src/components/tag-input.tsx`; Seiten `/fotospots` (Übersicht) + `/fotospots/[id]` (Detail mit Karten-Link & Motiv-Chips). Navigationspunkt aktiviert.
 
 ## QA Test Results
-_To be added by /qa_
+
+**Tested:** 2026-06-09 · **Tester:** QA Engineer (AI) · **Methode:** Code-Review + Unit (Vitest) + E2E (Playwright via System-Edge).
+
+### Acceptance Criteria Status
+- [x] Fotospot mit nur Namen anlegen (GPS optional)
+- [x] Name-Pflicht (Validierung)
+- [x] Ungültige Koordinaten abgelehnt (Bereich −90…90 / −180…180; Komma toleriert)
+- [x] „Auf Karte öffnen" bei vorhandenen Koordinaten (externer OSM-Link)
+- [x] Kein Karten-Link ohne Koordinaten
+- [x] Verknüpfte Motive (Mehrfachauswahl) → anklickbar auf Detailseite
+- [x] Beobachtungen/Ideen-Freitext bleibt erhalten
+- [x] Löschen mit Bestätigung
+- [x] Textsuche (Name/Beobachtungen/Tags) + Leerzustand
+
+### Security Audit Results
+- [x] Lokal, kein Backend; Fotospots nie in geteilten Motivpaketen (PROJ-4)
+- [x] Bild-URL auf http(s) beschränkt; Texte React-escaped
+- [x] Externer Karten-Link mit `rel=noopener`
+
+### Bugs Found
+Keine. (Test-Bug bei Selektor-Mehrdeutigkeit während der Erstellung behoben.)
+
+### Summary
+- **Acceptance Criteria:** alle erfüllt · **Bugs:** 0
+- **Unit Tests:** 61/61 grün (inkl. `geo`)
+- **E2E Tests:** 36/36 grün (inkl. 7 PROJ-5) via System-Edge — keine Regressionen
+- **Security:** Pass · **Production Ready:** YES
 
 ## Deployment
 _To be added by /deploy_
