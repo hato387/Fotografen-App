@@ -23,7 +23,7 @@ interface NavItem {
 
 const NAV_ITEMS: NavItem[] = [
   { label: "Motive", href: "/motive", icon: Database, ready: true },
-  { label: "Kalender", href: "/kalender", icon: CalendarRange, ready: false },
+  { label: "Kalender", href: "/kalender", icon: CalendarRange, ready: true },
   { label: "Fotospots", href: "/fotospots", icon: MapPin, ready: false },
   { label: "Einstellungen", href: "/fotoeinstellungen", icon: Camera, ready: false },
   { label: "Backup", href: "/backup", icon: Save, ready: false },

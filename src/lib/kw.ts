@@ -53,3 +53,19 @@ export function kwSpanne(startKW: number, endKW: number): string {
 export function istJahresuebergang(startKW: number, endKW: number): boolean {
   return startKW > endKW;
 }
+
+/** Aktuelle ISO-Kalenderwoche aus einem Datum (Standard: heute). */
+export function getCurrentKW(date: Date = new Date()): number {
+  const d = new Date(
+    Date.UTC(date.getFullYear(), date.getMonth(), date.getDate()),
+  );
+  // ISO: Woche gehört zum Jahr ihres Donnerstags.
+  const dayNum = (d.getUTCDay() + 6) % 7; // Mo=0 … So=6
+  d.setUTCDate(d.getUTCDate() - dayNum + 3); // auf Donnerstag
+  const firstThursday = new Date(Date.UTC(d.getUTCFullYear(), 0, 4));
+  const firstDayNum = (firstThursday.getUTCDay() + 6) % 7;
+  firstThursday.setUTCDate(firstThursday.getUTCDate() - firstDayNum + 3);
+  return (
+    1 + Math.round((d.getTime() - firstThursday.getTime()) / (7 * 86_400_000))
+  );
+}

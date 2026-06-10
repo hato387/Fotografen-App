@@ -12,6 +12,8 @@ export const KATEGORIE_META: Record<
     gradientClass: string;
     /** Akzent-Textfarbe */
     accentClass: string;
+    /** Vollfarbe für Timeline-Balken */
+    barClass: string;
   }
 > = {
   Tier: {
@@ -22,6 +24,7 @@ export const KATEGORIE_META: Record<
     gradientClass:
       "from-amber-100 to-amber-50 dark:from-amber-950/40 dark:to-background",
     accentClass: "text-amber-600 dark:text-amber-300",
+    barClass: "bg-amber-400/85 dark:bg-amber-500/70",
   },
   Pflanze: {
     label: "Pflanze",
@@ -31,6 +34,7 @@ export const KATEGORIE_META: Record<
     gradientClass:
       "from-emerald-100 to-emerald-50 dark:from-emerald-950/40 dark:to-background",
     accentClass: "text-emerald-600 dark:text-emerald-300",
+    barClass: "bg-emerald-500/85 dark:bg-emerald-500/70",
   },
   Landschaft: {
     label: "Landschaft",
@@ -40,5 +44,6 @@ export const KATEGORIE_META: Record<
     gradientClass:
       "from-sky-100 to-sky-50 dark:from-sky-950/40 dark:to-background",
     accentClass: "text-sky-600 dark:text-sky-300",
+    barClass: "bg-sky-400/85 dark:bg-sky-500/70",
   },
 };

@@ -1,6 +1,6 @@
 # PROJ-3: Kalender
 
-## Status: Architected
+## Status: Approved
 **Created:** 2026-06-09
 **Last Updated:** 2026-06-09
 
@@ -153,8 +153,57 @@ Abgeleitete Begriffe (berechnet, nicht gespeichert):
 ### D) Abhängigkeiten
 **Keine neuen Pakete.** shadcn/ui (tabs, select, switch, badge, button, input, card), `useMotive`, `useSaisonphasen`, KW-Helfer aus PROJ-2.
 
+## Implementation Notes (Frontend)
+**Stand 2026-06-09 — UI implementiert, Build grün.**
+
+Neu:
+- **Seite `/kalender`** (`src/app/kalender/page.tsx`); Navigationspunkt „Kalender" aktiviert.
+- **Berechnungs-Helfer (unit-getestet):** `src/lib/saison.ts` (`isActiveInKW`, `weeksUntilStart`, `isUpcoming`), `getCurrentKW` in `src/lib/kw.ts`, Filter-Logik in `src/lib/kalender.ts` (`motivPasses`, `phasePassesQuality`).
+- **Komponenten** in `src/components/kalender/`: `kalender-filter-bar.tsx` (Suche, Status, Konfidenz, Kategorie, Höhepunkt-Switch, Tag-Chips), `wochen-ansicht.tsx` (KW-Navigator, Aktiv-/Bevorstehend-Blöcke), `jahres-timeline.tsx` (CSS-/Prozent-basierte Balken, Monats-Kopf, Heute-Markierung, Jahresübergang als 2 Segmente).
+- Kategorie-Balkenfarben (`barClass`) zu `src/lib/kategorie.ts` ergänzt.
+
+Hinweise:
+- Reine Sicht — kein neues Datenmodell; liest Motive + Saisonphasen (je eine Hook-Instanz).
+- Status-Filter wirkt phasenweise relativ zur aktuellen KW; gilt für beide Ansichten.
+
 ## QA Test Results
-_To be added by /qa_
+
+**Tested:** 2026-06-09 · **Tester:** QA Engineer (AI) · **Methode:** Code-Review + Unit (Vitest) + E2E (Playwright via System-Edge).
+
+### Acceptance Criteria Status
+- [x] Wochenansicht zeigt in der aktuellen KW aktive Motive
+- [x] KW vor/zurück blättern + „Heute"
+- [x] „Bevorstehend" (nächste 4 Wochen) als eigener Block
+- [x] Jahres-Timeline: Balken je Motiv mit Monats-Kopf
+- [x] Aktuelle KW markiert (senkrechte Linie)
+- [x] Jahresübergang (Start > End) wird umlaufend als zwei Segmente gezeichnet
+- [x] Filter (Status, Konfidenz, Höhepunkt, Kategorie, Tags, Text) wirken auf beide Ansichten
+- [x] Klick auf Motiv/Balken → Detailseite
+- [x] „Keine Treffer" bei leerem Filterergebnis (Timeline)
+- [x] Leerzustand ohne Motive/Phasen (Verweis auf Motive)
+
+### Edge Cases Status
+- [x] Keine Motive/Phasen → Hinweis
+- [x] Jahresübergangs-Phase korrekt (Woche aktiv; Timeline umlaufend)
+- [x] Höhepunkt hervorgehoben (Stern/Ring); niedrige Konfidenz blasser
+- [x] Viele Motive → Timeline horizontal scrollbar
+
+### Security Audit Results
+- [x] Kein Backend/Auth; reine Sicht über lokale Daten
+- [x] React-escaped; keine neuen Eingaben/URLs
+- [x] Keine Secrets
+
+### Bugs Found
+Keine.
+
+### Summary
+- **Acceptance Criteria:** alle erfüllt
+- **Bugs:** 0
+- **Unit Tests:** 42/42 grün (inkl. `saison`, `kalender`)
+- **E2E Tests:** 25/25 grün (12 PROJ-1 + 7 PROJ-2 + 6 PROJ-3; via System-Edge) — keine Regressionen
+- **Security:** Pass
+- **Production Ready:** YES
+- **Recommendation:** Deploy-fähig.
 
 ## Deployment
 _To be added by /deploy_
