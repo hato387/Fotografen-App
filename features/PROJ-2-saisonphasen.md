@@ -1,6 +1,6 @@
 # PROJ-2: Saisonphasen
 
-## Status: Planned
+## Status: Architected
 **Created:** 2026-06-09
 **Last Updated:** 2026-06-09
 
@@ -83,12 +83,69 @@
 <!-- Added by /architecture -->
 | Decision | Rationale | Date |
 |----------|-----------|------|
+| Eigene Collection `naturfoto:saisonphasen` mit `motivId` (statt im Motiv eingebettet) | Kalender (PROJ-3) liest motivübergreifend; sauberes Kaskaden-Löschen per `motivId` | 2026-06-09 |
+| Wiederverwendung von `useLocalCollection` (aus PROJ-1) | Kein neuer Speichercode; konsistente Logik & Fehlerbehandlung | 2026-06-09 |
+| KW→Monat als reine Anzeige-Hilfe (Näherung) | KW variiert leicht je Jahr; für Orientierung genügt eine feste Zuordnung | 2026-06-09 |
+| KW-Auswahl (1–53) statt Freitext-Zahl | Verhindert ungültige Eingaben, bessere Bedienung | 2026-06-09 |
+| Phasen-Formular & Lösch-Dialog als Dialog (wie Motiv) | Konsistente UX, gleiche shadcn-Bausteine | 2026-06-09 |
+| Kaskaden-Löschen + dynamische Warnung im Motiv-Lösch-Dialog (`warning`-Prop) | Erfüllt PROJ-1-Löschregel; nutzt die in PROJ-1 vorbereitete Prop | 2026-06-09 |
 
 ---
 <!-- Sections below are added by subsequent skills -->
 
 ## Tech Design (Solution Architect)
-_To be added by /architecture_
+
+### A) Komponentenstruktur
+```
+Seite „Motiv-Detail" (/motive/[id]) — bestehende Seite, erweitert
+└── NEUER Abschnitt „Saisonphasen"
+    ├── Kopfzeile: Titel + Button „Saisonphase hinzufügen"
+    ├── Liste der Phasen (zum Motiv)
+    │   └── Phasen-Zeile: Bezeichnung · KW-Spanne (+ Monat) · Konfidenz-Badge
+    │       · ⭐ Höhepunkt · Region · Bearbeiten/Löschen
+    └── Leerzustand: „Noch keine Saisonphasen — hinzufügen"
+
+Saisonphasen-Formular (Dialog, Anlegen & Bearbeiten)
+├── Bezeichnung (Freitext, optional)
+├── Start-KW + End-KW (Auswahl 1–53, mit Monatsanzeige)
+├── Region (Freitext, optional)
+├── Konfidenz (niedrig/mittel/hoch, Default „mittel")
+├── Höhepunkt (Schalter)
+└── Notiz (Freitext, optional)
+
+Lösch-Bestätigung für eine Phase (kurzer Dialog)
+```
+> Die Karten-Übersicht (`/motive`) bleibt unverändert. Die motivübergreifende Sicht kommt mit dem Kalender (PROJ-3).
+
+### B) Datenmodell (in Worten)
+```
+Eine Saisonphase hat:
+- Eindeutige ID (automatisch erzeugt)
+- motivId (Verweis auf das zugehörige Motiv)
+- Bezeichnung (optional)
+- startKW (1–53), endKW (1–53)   → startKW > endKW = Jahresübergang
+- Region (optional)
+- Konfidenz: niedrig | mittel | hoch (Default „mittel")
+- Höhepunkt: ja/nein (Default nein)
+- Notiz (optional)
+- Erstellt-am / Geändert-am
+
+Gespeichert in: localStorage, Schlüssel "naturfoto:saisonphasen"
+(eigene Collection, NICHT im Motiv eingebettet)
+```
+**Kaskaden-Löschen:** Beim Löschen eines Motivs werden alle Phasen mit passender `motivId` entfernt; der Motiv-Lösch-Dialog zeigt die Anzahl betroffener Phasen (über die in PROJ-1 vorbereitete `warning`-Prop).
+
+### C) Tech-Entscheidungen
+| Entscheidung | Warum |
+|--------------|-------|
+| Eigene Collection mit `motivId` | Kalender liest motivübergreifend; Kaskaden-Löschen |
+| `useLocalCollection` wiederverwenden | Kein neuer Speichercode |
+| KW→Monat als Anzeige-Hilfe | Orientierung ohne echte Jahres-Rechnung |
+| KW-Auswahl statt Freitext | Keine ungültigen Eingaben |
+| Dialog-Formular wie Motiv | Konsistente UX |
+
+### D) Abhängigkeiten
+**Keine neuen Pakete.** Vorhanden: shadcn/ui (dialog, select, switch, badge, button, label, input, textarea), `useLocalCollection` und das Motiv-Detail-Gerüst aus PROJ-1.
 
 ## QA Test Results
 _To be added by /qa_
