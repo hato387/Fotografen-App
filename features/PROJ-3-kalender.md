@@ -1,6 +1,6 @@
 # PROJ-3: Kalender
 
-## Status: Planned
+## Status: Architected
 **Created:** 2026-06-09
 **Last Updated:** 2026-06-09
 
@@ -99,12 +99,59 @@
 <!-- Added by /architecture -->
 | Decision | Rationale | Date |
 |----------|-----------|------|
+| Eigene Seite `/kalender`, in der Navigation aktiviert | Erster motivübergreifender Bereich; liest Motive + Saisonphasen | 2026-06-09 |
+| Liest `useMotive` + `useSaisonphasen` (je eine Instanz auf der Seite) | Wiederverwendung der Speicher-Schicht; keine Duplikate | 2026-06-09 |
+| Reine Berechnungs-Helfer in `src/lib/saison.ts` (unit-getestet) | Aktiv/Bevorstehend/Filter testbar isoliert; zyklische KW-Logik | 2026-06-09 |
+| Aktuelle KW via ISO-Wochen-Helfer aus Systemdatum | Kein manuelles Setzen; deckt Jahreswechsel ab | 2026-06-09 |
+| Timeline mit CSS-Grid (53 Spalten); Wrap-Phasen in zwei Segmente | Robuste, performante Darstellung ohne Grafikbibliothek | 2026-06-09 |
+| Keine neuen Pakete | shadcn/ui + bestehende Hooks reichen | 2026-06-09 |
 
 ---
 <!-- Sections below are added by subsequent skills -->
 
 ## Tech Design (Solution Architect)
-_To be added by /architecture_
+
+### A) Komponentenstruktur
+```
+Seite „Kalender" (/kalender) — NEU, in Navigation aktiviert
+├── Kopfzeile: Titel + Ansicht-Umschalter (Tabs: Woche | Jahres-Timeline)
+├── Filterleiste (wirkt auf beide Ansichten):
+│   Textsuche · Status (Aktiv/Bevorstehend/Alle) · Konfidenz (alle/≥mittel/hoch)
+│   · Höhepunkt-Schalter · Kategorie · Tags
+├── Wochenansicht
+│   ├── KW-Navigator (‹ KW n › + „Heute")
+│   ├── „Aktiv in KW n" — Karten der Motive mit aktiver Phase
+│   └── „Bevorstehend (nächste 4 Wochen)" — Block
+└── Jahres-Timeline
+    ├── Monats-/KW-Kopf + Heute-Markierung (senkrechte Linie)
+    └── pro Motiv eine Zeile, Phasen als farbige Balken
+        (Farbe nach Kategorie · Höhepunkt-Stern · niedrige Konfidenz blasser)
+
+Klick auf Motiv-Karte/Balken → /motive/[id]
+Leerzustand: Verweis auf Motive/Saisonphasen anlegen
+```
+
+### B) Datenmodell
+```
+Kein neues Datenmodell — der Kalender ist eine reine Sicht.
+Liest: Motive (PROJ-1) + Saisonphasen (PROJ-2) aus localStorage.
+
+Abgeleitete Begriffe (berechnet, nicht gespeichert):
+- aktuelle KW = ISO-Woche des heutigen Systemdatums
+- „aktiv in KW w" = eine Phase deckt w ab (zyklisch, inkl. Jahresübergang)
+- „bevorstehend" = Phasenbeginn 1–4 Wochen nach der aktuellen KW
+```
+
+### C) Tech-Entscheidungen
+| Entscheidung | Warum |
+|--------------|-------|
+| Reine Sicht, kein neues Modell | Visualisiert vorhandene Daten |
+| Helfer in `lib/saison.ts` (unit-getestet) | Zyklische KW-Logik isoliert testbar |
+| CSS-Grid-Timeline (53 Spalten) | Kein Grafik-Paket; performant |
+| Eine Hook-Instanz je Collection auf der Seite | Vermeidet Desync (wie in PROJ-2) |
+
+### D) Abhängigkeiten
+**Keine neuen Pakete.** shadcn/ui (tabs, select, switch, badge, button, input, card), `useMotive`, `useSaisonphasen`, KW-Helfer aus PROJ-2.
 
 ## QA Test Results
 _To be added by /qa_
