@@ -18,6 +18,7 @@
 **📦 Vollbackup** (für dich selbst — Sicherung/Geräteumzug)
 - Enthält **alle** App-Daten: Motive, Saisonphasen, Fotospots (inkl. GPS, Beobachtungen & Ideen), Fotoeinstellungen (sofern vorhanden).
 - **Nicht** datenschutzbereinigt.
+- *Umgesetzt:* Vollbackup-Export/Restore deckt seit PROJ-5/PROJ-7 alle vier Collections ab (`BackupData` erweitert).
 
 **🌱 Motivdatenpaket** (zum Teilen / als KI-Importformat für PROJ-8)
 - Enthält **ausgewählte Motive** (Mehrfachauswahl) samt Wissen: Beschreibung, Verhalten, Lebensraum, Fototipps, Ethik, Tags, Quellen, **Saisonphasen**.

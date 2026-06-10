@@ -25,7 +25,7 @@ const NAV_ITEMS: NavItem[] = [
   { label: "Motive", href: "/motive", icon: Database, ready: true },
   { label: "Kalender", href: "/kalender", icon: CalendarRange, ready: true },
   { label: "Fotospots", href: "/fotospots", icon: MapPin, ready: true },
-  { label: "Einstellungen", href: "/fotoeinstellungen", icon: Camera, ready: false },
+  { label: "Einstellungen", href: "/fotoeinstellungen", icon: Camera, ready: true },
   { label: "Backup", href: "/backup", icon: Save, ready: true },
   { label: "KI-Import", href: "/ki-import", icon: Sparkles, ready: false },
 ];

@@ -2,7 +2,7 @@
 // Datei-Format: versioniertes Envelope { app, type, version, exportedAt, data }.
 
 import { createId, STORAGE_VERSION } from "@/lib/storage";
-import { Motiv, Saisonphase } from "@/lib/types";
+import { Fotoeinstellung, Fotospot, Motiv, Saisonphase } from "@/lib/types";
 
 export const APP_ID = "naturfoto";
 
@@ -12,6 +12,9 @@ export type Konfliktstrategie = "ueberspringen" | "duplikat" | "ersetzen";
 export interface BackupData {
   motive: Motiv[];
   saisonphasen: Saisonphase[];
+  // Nur im Vollbackup; im datenschutzbereinigten Motivpaket absichtlich nicht.
+  fotospots?: Fotospot[];
+  fotoeinstellungen?: Fotoeinstellung[];
 }
 
 export interface BackupEnvelope {

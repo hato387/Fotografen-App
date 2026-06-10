@@ -20,6 +20,8 @@ import { Label } from "@/components/ui/label";
 import { RadioGroup, RadioGroupItem } from "@/components/ui/radio-group";
 import { ScrollArea } from "@/components/ui/scroll-area";
 import { Skeleton } from "@/components/ui/skeleton";
+import { useFotoeinstellungen } from "@/hooks/use-fotoeinstellungen";
+import { useFotospots } from "@/hooks/use-fotospots";
 import { useMotive } from "@/hooks/use-motive";
 import { useSaisonphasen } from "@/hooks/use-saisonphasen";
 import {
@@ -47,6 +49,8 @@ function downloadJson(filename: string, obj: unknown) {
 export default function BackupPage() {
   const motive = useMotive();
   const saison = useSaisonphasen();
+  const spots = useFotospots();
+  const settings = useFotoeinstellungen();
   const fileInput = useRef<HTMLInputElement>(null);
 
   const [selected, setSelected] = useState<Set<string>>(new Set());
@@ -58,7 +62,8 @@ export default function BackupPage() {
     useState<Konfliktstrategie>("ueberspringen");
   const [confirmRestore, setConfirmRestore] = useState(false);
 
-  const loaded = motive.loaded && saison.loaded;
+  const loaded =
+    motive.loaded && saison.loaded && spots.loaded && settings.loaded;
 
   const toggle = (id: string) =>
     setSelected((prev) => {
@@ -78,6 +83,8 @@ export default function BackupPage() {
     const env = buildBackup("vollbackup", {
       motive: motive.items,
       saisonphasen: saison.items,
+      fotospots: spots.items,
+      fotoeinstellungen: settings.items,
     });
     downloadJson(backupDateiname("vollbackup"), env);
     toast.success("Vollbackup exportiert.");
@@ -109,7 +116,9 @@ export default function BackupPage() {
     if (envelope.type === "vollbackup") {
       const ok =
         motive.replaceAll(envelope.data.motive) &&
-        saison.replaceAll(envelope.data.saisonphasen);
+        saison.replaceAll(envelope.data.saisonphasen) &&
+        spots.replaceAll(envelope.data.fotospots ?? []) &&
+        settings.replaceAll(envelope.data.fotoeinstellungen ?? []);
       ok
         ? toast.success(
             `Vollbackup wiederhergestellt (${envelope.data.motive.length} Motive).`,

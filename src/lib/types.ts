@@ -67,3 +67,21 @@ export interface Fotospot {
   erstelltAm: string;
   geaendertAm: string;
 }
+
+/**
+ * Eine Fotoeinstellung (PROJ-7) — eigenständiges Kamera-Rezept, selbst benannt.
+ * Nicht motivgebunden. Kamera-Werte als Freitext (variable Schreibweisen).
+ */
+export interface Fotoeinstellung {
+  id: string;
+  name: string;
+  blende?: string;
+  belichtungszeit?: string;
+  iso?: string;
+  brennweite?: string;
+  ausruestung?: string;
+  notiz?: string;
+  tags: string[];
+  erstelltAm: string;
+  geaendertAm: string;
+}

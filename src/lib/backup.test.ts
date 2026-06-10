@@ -56,6 +56,31 @@ describe("buildBackup / buildMotivpaket", () => {
   });
 });
 
+describe("Vollbackup mit Fotospots/Fotoeinstellungen", () => {
+  it("baut und parst inklusive der Zusatz-Collections (Round-Trip)", () => {
+    const env = buildBackup("vollbackup", {
+      motive: [motiv("1", "A")],
+      saisonphasen: [],
+      fotospots: [
+        {
+          id: "s1",
+          name: "Spot",
+          motivIds: [],
+          tags: [],
+          erstelltAm: "",
+          geaendertAm: "",
+        },
+      ],
+      fotoeinstellungen: [
+        { id: "f1", name: "Vogel im Flug", tags: [], erstelltAm: "", geaendertAm: "" },
+      ],
+    });
+    const parsed = parseEnvelope(JSON.stringify(env));
+    expect(parsed.data.fotospots).toHaveLength(1);
+    expect(parsed.data.fotoeinstellungen?.[0].name).toBe("Vogel im Flug");
+  });
+});
+
 describe("backupDateiname", () => {
   it("baut sprechende Namen", () => {
     const d = new Date("2026-06-09T10:00:00Z");

@@ -1,6 +1,6 @@
 # PROJ-7: Fotoeinstellungen
 
-## Status: Planned
+## Status: Approved
 **Created:** 2026-06-09
 **Last Updated:** 2026-06-09
 
@@ -76,15 +76,83 @@
 <!-- Added by /architecture -->
 | Decision | Rationale | Date |
 |----------|-----------|------|
+| Eigene Collection `naturfoto:fotoeinstellungen`; Navigation aktiviert | Wiederverwendung der Speicher-Schicht; eigenständig | 2026-06-09 |
+| Eine Seite mit Karten + Formular-Dialog (kein Detail-Route) | Rezepte sind kompakt; Werte passen auf die Karte | 2026-06-09 |
+| Kamera-Werte als Freitext (string) | Variable Schreibweisen (f/5.6, 1/2000, ISO 800) | 2026-06-09 |
+| In Vollbackup aufgenommen (PROJ-4 erweitert), NICHT in Motivpaketen | Nicht motivgebunden; Datenschutz-Paket bleibt schlank | 2026-06-09 |
 
 ---
 <!-- Sections below are added by subsequent skills -->
 
 ## Tech Design (Solution Architect)
-_To be added by /architecture_
+
+### A) Komponentenstruktur
+```
+Seite „Fotoeinstellungen" (/fotoeinstellungen) — NEU, Navigation aktiviert
+├── Kopf: Titel + „Neue Fotoeinstellung"
+├── Textsuche
+├── Karten-Raster: Name · Werte (Blende/Zeit/ISO/Brennweite) · Tags
+│   └── je Karte: Bearbeiten / Löschen
+└── Leerzustand
+
+Formular-Dialog (Anlegen & Bearbeiten): Name* · Blende · Belichtungszeit
+· ISO · Brennweite · Ausrüstung · Notiz · Tags
+Lösch-Bestätigung
+```
+
+### B) Datenmodell
+```
+- id, name (Pflicht)
+- blende?, belichtungszeit?, iso?, brennweite?  (Freitext)
+- ausruestung?, notiz?  (Freitext)
+- tags: string[]
+- erstelltAm / geaendertAm
+Gespeichert in: localStorage "naturfoto:fotoeinstellungen".
+Teil des Vollbackups (PROJ-4), NICHT der Motivpakete.
+```
+
+### C) Tech-Entscheidungen
+| Entscheidung | Warum |
+|--------------|-------|
+| Eigene Collection, eigenständig | Nicht motivgebunden |
+| Karten + Dialog (kein Detail) | Kompakte Rezepte |
+| Freitext-Werte | Variable Schreibweisen |
+| Vollbackup erweitert | Kein Datenverlust beim Restore |
+
+### D) Abhängigkeiten
+**Keine neuen Pakete.** shadcn/ui (dialog, input, textarea, badge, button, card) + bestehende Hooks; `TagInput` wiederverwendet.
+
+## Implementation Notes (Frontend)
+**Stand 2026-06-09 — UI implementiert, Build grün.**
+
+Neu: Collection `naturfoto:fotoeinstellungen` + `Fotoeinstellung`-Typ; `useFotoeinstellungen`; `src/components/fotoeinstellungen/fotoeinstellung-form-dialog.tsx`; Seite `/fotoeinstellungen` (Karten mit Werte-Übersicht + Inline-Bearbeiten/Löschen, Suche, Leerzustand). Navigationspunkt aktiviert.
+
+**Zusätzlich (PROJ-4 erweitert):** Das **Vollbackup** umfasst jetzt auch **Fotospots (PROJ-5)** und **Fotoeinstellungen (PROJ-7)** — `BackupData` erweitert, Export/Restore in `/backup` ergänzt. Motivpakete bleiben datenschutzbereinigt (nur Motive + Saisonphasen).
 
 ## QA Test Results
-_To be added by /qa_
+
+**Tested:** 2026-06-09 · **Tester:** QA Engineer (AI) · **Methode:** Code-Review + Unit (Vitest) + E2E (Playwright via System-Edge).
+
+### Acceptance Criteria Status
+- [x] Rezept mit eigenem Namen anlegen
+- [x] Name-Pflicht (Validierung)
+- [x] Nur mit Namen speicherbar (Werte optional)
+- [x] Blende/Belichtungszeit/ISO/Brennweite/Ausrüstung/Notiz als Freitext
+- [x] Bearbeiten & Löschen (mit Bestätigung)
+- [x] Textsuche (Name/Notiz/Tags) + Leerzustand
+- [x] Teil des Vollbackups, nicht der Motivpakete
+
+### Security Audit Results
+- [x] Lokal, kein Backend; Texte React-escaped; keine Secrets
+
+### Bugs Found
+Keine.
+
+### Summary
+- **Acceptance Criteria:** alle erfüllt · **Bugs:** 0
+- **Unit Tests:** 62/62 grün (inkl. Vollbackup-Round-Trip mit Zusatz-Collections)
+- **E2E Tests:** 42/42 grün (inkl. 6 PROJ-7) via System-Edge — keine Regressionen
+- **Security:** Pass · **Production Ready:** YES
 
 ## Deployment
 _To be added by /deploy_
