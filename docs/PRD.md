@@ -10,10 +10,10 @@ Ambitionierter Hobby-Naturfotograf (Einzelnutzer). **Pain Point heute:** Wissen 
 
 | Priority | Feature | Status |
 |----------|---------|--------|
-| P0 (MVP) | Motive-Datenbank | Planned |
-| P0 (MVP) | Saisonphasen je Motiv | Planned |
-| P0 (MVP) | Kalender (Woche + Jahres-Timeline, filterbar) | Planned |
-| P0 (MVP) | Backup/Import (JSON) | Planned |
+| P0 (MVP) | Motive-Datenbank | Approved |
+| P0 (MVP) | Saisonphasen je Motiv | Approved |
+| P0 (MVP) | Kalender (Woche + Jahres-Timeline, filterbar) | Approved |
+| P0 (MVP) | Backup/Import (JSON) | Approved |
 | P1 | Fotospots (inkl. Beobachtungen & Ideen) | Planned |
 | ~~P1~~ | ~~Journal~~ (zusammengelegt mit Fotospots) | Entfällt |
 | P1 | Fotoeinstellungen (eigenständige Rezept-Sammlung) | Planned |

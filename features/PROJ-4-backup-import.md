@@ -1,6 +1,6 @@
 # PROJ-4: Backup/Import
 
-## Status: Planned
+## Status: Approved
 **Created:** 2026-06-09
 **Last Updated:** 2026-06-09
 
@@ -95,15 +95,103 @@ Beide Importe zeigen **vorab eine Vorschau** (z. B. „5 Motive, 12 Saisonphasen
 <!-- Added by /architecture -->
 | Decision | Rationale | Date |
 |----------|-----------|------|
+| Eigene Seite `/backup`, in der Navigation aktiviert | Zentraler Ort für Export/Import | 2026-06-09 |
+| Versioniertes Envelope-Format `{ app, type, version, exportedAt, data }` | Erkennbar, prüfbar, zukunftssicher (Grundlage PROJ-8) | 2026-06-09 |
+| Reine Backup-Logik in `src/lib/backup.ts` (unit-getestet) | Bauen/Parsen/Mergen isoliert testbar | 2026-06-09 |
+| Import-IDs bei Motivpaket neu vergeben + `motivId` neu verdrahten | Verhindert ID-Kollisionen beim Zusammenführen | 2026-06-09 |
+| Konfliktstrategie global (Überspringen/Duplikat/Ersetzen) statt pro Eintrag | Deutlich einfachere UX; deckt die AC ab | 2026-06-09 |
+| `replaceAll()` am Speicher-Hook ergänzt | Restore (Vollbackup) und Merge atomar schreiben | 2026-06-09 |
 
 ---
 <!-- Sections below are added by subsequent skills -->
 
 ## Tech Design (Solution Architect)
-_To be added by /architecture_
+
+### A) Komponentenstruktur
+```
+Seite „Backup & Import" (/backup) — NEU, in Navigation aktiviert
+├── Karte „Vollbackup"
+│   └── Button „Vollbackup exportieren" (lädt JSON-Datei herunter)
+├── Karte „Motive teilen"
+│   ├── Motiv-Auswahl (Checkboxliste, „alle" möglich)
+│   └── Button „Auswahl exportieren" (datenschutzbereinigt)
+└── Karte „Importieren"
+    ├── Datei wählen (Upload)
+    ├── Vorschau (Typ · Anzahl Motive/Phasen)
+    ├── bei Motivpaket: Konfliktstrategie (Überspringen/Duplikat/Ersetzen)
+    └── Button „Importieren" → Ergebnismeldung (Toast)
+```
+
+### B) Datenmodell (Datei-Envelope)
+```
+{ app: "naturfoto", type: "vollbackup" | "motivpaket",
+  version: 1, exportedAt: ISO-Datum,
+  data: { motive: [...], saisonphasen: [...] } }
+
+- Vollbackup: alle Collections (Motive + Saisonphasen …). Restore = ersetzen.
+- Motivpaket: ausgewählte Motive + deren Saisonphasen. Merge = hinzufügen.
+  Datenschutzbereinigt = enthält KEINE Fotospots/Beobachtungen (PROJ-5).
+```
+
+### C) Tech-Entscheidungen
+| Entscheidung | Warum |
+|--------------|-------|
+| Envelope mit `type`+`version` | Erkennung/Validierung, Basis für PROJ-8 |
+| Logik in `lib/backup.ts` | Reine, testbare Funktionen (bauen/parsen/mergen) |
+| Neue IDs bei Paket-Import | Keine Kollisionen beim Zusammenführen |
+| Globale Konfliktstrategie | Einfache, klare UX |
+| `replaceAll()` am Hook | Atomares Restore/Merge, UI bleibt aktuell |
+
+### D) Abhängigkeiten
+**Keine neuen Pakete.** Browser-APIs (Blob/Download, FileReader) + bestehende Hooks/Storage-Schicht.
+
+## Implementation Notes (Frontend)
+**Stand 2026-06-09 — UI implementiert, Build grün.**
+
+Neu:
+- **Seite `/backup`** (`src/app/backup/page.tsx`); Navigationspunkt „Backup" aktiviert.
+- **Reine Backup-Logik (unit-getestet):** `src/lib/backup.ts` — `buildBackup`, `buildMotivpaket`, `backupDateiname`, `parseEnvelope` (Validierung), `mergeMotivpaket` (Konfliktstrategien mit ID-Neuvergabe).
+- **Speicher-Hook** um `replaceAll()` erweitert (atomares Restore/Merge).
+- Export = Blob-Download; Import = versteckter File-Input + `FileReader`. Vollbackup-Import hinter Bestätigungsdialog.
 
 ## QA Test Results
-_To be added by /qa_
+
+**Tested:** 2026-06-09 · **Tester:** QA Engineer (AI) · **Methode:** Code-Review + Unit (Vitest) + E2E (Playwright via System-Edge).
+
+### Acceptance Criteria Status
+- [x] Vollbackup exportieren → JSON mit Kopfdaten (Typ/Version/Datum)
+- [x] Motive exportieren (Auswahl) → nur Wissen + Saisonphasen, ohne private Daten
+- [x] Vollbackup importieren → ersetzt alle Daten nach Warnung
+- [x] Motivpaket importieren ohne Konflikt → hinzugefügt
+- [x] Namenskonflikt → Überspringen / Duplikat / Ersetzen wählbar
+- [x] Ungültige/beschädigte Datei → Fehlermeldung, Daten unverändert
+- [x] Unbekannte Version → abgelehnt mit Hinweis
+- [x] Vorschau (Typ + Anzahl) vor dem Anwenden
+- [x] Ergebnismeldung nach Import (Toast)
+
+### Edge Cases Status
+- [x] Leere App → Vollbackup-Export erzeugt gültige Datei
+- [x] Abgebrochener/ungültiger Import → kein Teil-Schreiben (atomar via replaceAll)
+- [x] Manipulierte Datei → Schema-Prüfung greift
+- [x] Motivpaket ohne Saisonphasen zulässig
+- [x] Import-IDs neu vergeben → keine Kollisionen
+
+### Security Audit Results
+- [x] Rein lokal (Blob/FileReader), nichts verlässt das Gerät
+- [x] Strikte Envelope-Validierung vor jeder Änderung
+- [x] Motivpaket datenschutzbereinigt (keine Fotospots/Beobachtungen — PROJ-5)
+
+### Bugs Found
+Keine. (Während der Testerstellung 1 Test-Bug gefunden & behoben: `addInitScript`-Seeding überschrieb den Import bei Navigation → auf einmaliges `evaluate`+`reload` umgestellt.)
+
+### Summary
+- **Acceptance Criteria:** alle erfüllt
+- **Bugs:** 0
+- **Unit Tests:** 54/54 grün (inkl. 12 für `backup`)
+- **E2E Tests:** 29/29 grün (12 PROJ-1 + 7 PROJ-2 + 6 PROJ-3 + 4 PROJ-4; via System-Edge) — keine Regressionen
+- **Security:** Pass
+- **Production Ready:** YES
+- **Recommendation:** Deploy-fähig. **MVP komplett.**
 
 ## Deployment
 _To be added by /deploy_

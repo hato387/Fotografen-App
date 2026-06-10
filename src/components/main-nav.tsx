@@ -26,7 +26,7 @@ const NAV_ITEMS: NavItem[] = [
   { label: "Kalender", href: "/kalender", icon: CalendarRange, ready: true },
   { label: "Fotospots", href: "/fotospots", icon: MapPin, ready: false },
   { label: "Einstellungen", href: "/fotoeinstellungen", icon: Camera, ready: false },
-  { label: "Backup", href: "/backup", icon: Save, ready: false },
+  { label: "Backup", href: "/backup", icon: Save, ready: true },
   { label: "KI-Import", href: "/ki-import", icon: Sparkles, ready: false },
 ];
 

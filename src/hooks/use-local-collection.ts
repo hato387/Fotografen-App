@@ -28,6 +28,8 @@ export interface UseCollectionResult<T extends Entity> {
   remove: (id: string) => boolean;
   /** Entfernt alle Elemente, die das Prädikat erfüllen (in einem Schreibvorgang). */
   removeWhere: (predicate: (item: T) => boolean) => boolean;
+  /** Ersetzt die gesamte Collection (für Restore/Import). */
+  replaceAll: (items: T[]) => boolean;
 }
 
 /**
@@ -104,5 +106,20 @@ export function useLocalCollection<T extends Entity>(
     [items, persist],
   );
 
-  return { items, loaded, error, getById, add, update, remove, removeWhere };
+  const replaceAll = useCallback(
+    (next: T[]): boolean => persist(next),
+    [persist],
+  );
+
+  return {
+    items,
+    loaded,
+    error,
+    getById,
+    add,
+    update,
+    remove,
+    removeWhere,
+    replaceAll,
+  };
 }
