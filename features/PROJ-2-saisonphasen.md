@@ -1,6 +1,6 @@
 # PROJ-2: Saisonphasen
 
-## Status: Architected
+## Status: In Progress
 **Created:** 2026-06-09
 **Last Updated:** 2026-06-09
 
@@ -89,6 +89,20 @@
 | KW-Auswahl (1–53) statt Freitext-Zahl | Verhindert ungültige Eingaben, bessere Bedienung | 2026-06-09 |
 | Phasen-Formular & Lösch-Dialog als Dialog (wie Motiv) | Konsistente UX, gleiche shadcn-Bausteine | 2026-06-09 |
 | Kaskaden-Löschen + dynamische Warnung im Motiv-Lösch-Dialog (`warning`-Prop) | Erfüllt PROJ-1-Löschregel; nutzt die in PROJ-1 vorbereitete Prop | 2026-06-09 |
+
+---
+
+## Implementation Notes (Frontend)
+**Stand 2026-06-09 — UI implementiert, Build grün.**
+
+Neu/erweitert:
+- **Datenmodell:** `Saisonphase` + `Konfidenz` in `src/lib/types.ts`; Collection `"saisonphasen"` in `src/lib/storage.ts`.
+- **Hooks:** `src/hooks/use-saisonphasen.ts`; `useLocalCollection` um **`removeWhere(predicate)`** erweitert (für Kaskaden-Löschen in einem Schreibvorgang).
+- **Hilfen:** `src/lib/kw.ts` (KW-Liste 1–53, `kwToMonat`-Näherung, `kwSpanne`, `istJahresuebergang`), `src/lib/konfidenz.ts` (Badge-Farben).
+- **Komponenten:** `src/components/saisonphasen/` — `saisonphasen-section.tsx` (Liste, Leerzustand, Add/Edit/Delete), `saisonphase-form-dialog.tsx` (RHF+Zod, KW-Selects mit Monatsanzeige, Höhepunkt-Switch, Jahresübergang-Hinweis), `konfidenz-badge.tsx`.
+- **Integration:** Abschnitt „Saisonphasen" in `/motive/[id]`. **Kaskaden-Löschen** beim Motiv-Löschen + **dynamische Warnung** (Anzahl Phasen) über die PROJ-1-`warning`-Prop.
+
+Hinweis: Es wird bewusst **eine** `useSaisonphasen`-Instanz auf der Detailseite gehalten und an die Section übergeben (zwei Instanzen würden bei Schreibvorgängen im selben Dokument desynchronisieren).
 
 ---
 <!-- Sections below are added by subsequent skills -->

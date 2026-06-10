@@ -26,6 +26,8 @@ export interface UseCollectionResult<T extends Entity> {
   update: (id: string, patch: Partial<Omit<T, "id">>) => boolean;
   /** true bei Erfolg, false bei Schreibfehler. */
   remove: (id: string) => boolean;
+  /** Entfernt alle Elemente, die das Prädikat erfüllen (in einem Schreibvorgang). */
+  removeWhere: (predicate: (item: T) => boolean) => boolean;
 }
 
 /**
@@ -96,5 +98,11 @@ export function useLocalCollection<T extends Entity>(
     [items, persist],
   );
 
-  return { items, loaded, error, getById, add, update, remove };
+  const removeWhere = useCallback(
+    (predicate: (item: T) => boolean): boolean =>
+      persist(items.filter((it) => !predicate(it))),
+    [items, persist],
+  );
+
+  return { items, loaded, error, getById, add, update, remove, removeWhere };
 }

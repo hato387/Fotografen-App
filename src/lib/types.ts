@@ -27,3 +27,25 @@ export interface Motiv {
   erstelltAm: string; // ISO-Datum
   geaendertAm: string; // ISO-Datum
 }
+
+export type Konfidenz = "niedrig" | "mittel" | "hoch";
+
+export const KONFIDENZEN: Konfidenz[] = ["niedrig", "mittel", "hoch"];
+
+/**
+ * Eine Saisonphase (PROJ-2) — gehört zu genau einem Motiv (motivId).
+ * Zeitfenster als Kalenderwochen, zyklisch: startKW > endKW = Jahresübergang.
+ */
+export interface Saisonphase {
+  id: string;
+  motivId: string;
+  bezeichnung?: string;
+  startKW: number; // 1–53
+  endKW: number; // 1–53
+  region?: string;
+  konfidenz: Konfidenz;
+  hoehepunkt: boolean;
+  notiz?: string;
+  erstelltAm: string; // ISO-Datum
+  geaendertAm: string; // ISO-Datum
+}

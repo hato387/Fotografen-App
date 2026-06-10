@@ -11,16 +11,19 @@ import {
   MotivFormDialog,
   type MotivInput,
 } from "@/components/motive/motiv-form-dialog";
+import { SaisonphasenSection } from "@/components/saisonphasen/saisonphasen-section";
 import { Badge } from "@/components/ui/badge";
 import { Button } from "@/components/ui/button";
 import { Skeleton } from "@/components/ui/skeleton";
 import { useMotive } from "@/hooks/use-motive";
+import { useSaisonphasen } from "@/hooks/use-saisonphasen";
 import { isSafeHttpUrl } from "@/lib/url";
 
 export default function MotivDetailPage() {
   const params = useParams<{ id: string }>();
   const router = useRouter();
   const { loaded, getById, update, remove } = useMotive();
+  const saisonStore = useSaisonphasen();
   const [editOpen, setEditOpen] = useState(false);
   const [deleteOpen, setDeleteOpen] = useState(false);
   const [imgError, setImgError] = useState(false);
@@ -61,8 +64,14 @@ export default function MotivDetailPage() {
       );
   };
 
+  const phaseCount = saisonStore.items.filter(
+    (p) => p.motivId === motiv.id,
+  ).length;
+
   const handleDelete = () => {
     const name = motiv.name;
+    // Kaskade: zuerst die zugehörigen Saisonphasen entfernen.
+    if (phaseCount > 0) saisonStore.removeWhere((p) => p.motivId === motiv.id);
     const ok = remove(motiv.id);
     if (!ok) {
       toast.error("Löschen fehlgeschlagen — bitte erneut versuchen.");
@@ -71,6 +80,11 @@ export default function MotivDetailPage() {
     toast.success(`Motiv „${name}" gelöscht.`);
     router.push("/motive");
   };
+
+  const deleteWarning =
+    phaseCount > 0
+      ? `Dazu ${phaseCount === 1 ? "gehört 1 Saisonphase" : `gehören ${phaseCount} Saisonphasen`}, die ebenfalls gelöscht ${phaseCount === 1 ? "wird" : "werden"}.`
+      : undefined;
 
   const showImage = isSafeHttpUrl(motiv.bildUrl) && !imgError;
   const hasContent = Boolean(
@@ -183,6 +197,11 @@ export default function MotivDetailPage() {
         )}
       </div>
 
+      {/* PROJ-2: Saisonphasen */}
+      {saisonStore.loaded && (
+        <SaisonphasenSection motivId={motiv.id} store={saisonStore} />
+      )}
+
       <p className="text-xs text-muted-foreground">
         Angelegt am {formatDate(motiv.erstelltAm)}
         {motiv.geaendertAm !== motiv.erstelltAm &&
@@ -200,6 +219,7 @@ export default function MotivDetailPage() {
         onOpenChange={setDeleteOpen}
         motiv={motiv}
         onConfirm={handleDelete}
+        warning={deleteWarning}
       />
     </div>
   );

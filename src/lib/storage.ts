@@ -5,8 +5,8 @@
 export const STORAGE_PREFIX = "naturfoto";
 export const STORAGE_VERSION = 1;
 
-/** Bekannte Collections der App. Wird mitwachsen (saisonphasen, fotospots …). */
-export type CollectionKey = "motive";
+/** Bekannte Collections der App. Wird mitwachsen (fotospots, fotoeinstellungen …). */
+export type CollectionKey = "motive" | "saisonphasen";
 
 export function storageKey(collection: CollectionKey): string {
   return `${STORAGE_PREFIX}:${collection}`;
