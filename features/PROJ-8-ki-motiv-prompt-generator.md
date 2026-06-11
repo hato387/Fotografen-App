@@ -1,6 +1,6 @@
 # PROJ-8: KI-Motiv-Prompt-Generator & Import
 
-## Status: Planned
+## Status: Approved
 **Created:** 2026-06-09
 **Last Updated:** 2026-06-09
 
@@ -89,15 +89,83 @@ Weist die KI an,
 <!-- Added by /architecture -->
 | Decision | Rationale | Date |
 |----------|-----------|------|
+| Reine Logik in `src/lib/ki.ts` (unit-getestet): Prompt-Bau, JSON-Extraktion, Normalisierung | Testbar; KI-Ausgabe robust verarbeiten | 2026-06-09 |
+| Import nutzt PROJ-4 `mergeMotivpaket` + Hook-`replaceAll` | Eine Quelle der Wahrheit; Konfliktbehandlung wiederverwendet | 2026-06-09 |
+| Toleranter Parser: akzeptiert Envelope, `{motive,saisonphasen}` oder einzelnes Motiv-Objekt; löst JSON aus Beifang | KIs liefern uneinheitlich; maximale Robustheit | 2026-06-09 |
+| Sanitizing: Pflicht (Name+Kategorie) erzwingen, KW/Konfidenz prüfen, IDs neu vergeben | Schützt den Bestand vor fehlerhafter KI-Ausgabe | 2026-06-09 |
+| Keine KI-API; reine Clipboard-Erzeugung | KI-neutral, kein Key/Kosten | 2026-06-09 |
 
 ---
 <!-- Sections below are added by subsequent skills -->
 
 ## Tech Design (Solution Architect)
-_To be added by /architecture_
+
+### A) Komponentenstruktur
+```
+Seite „KI-Import" (/ki-import) — NEU, Navigation aktiviert
+├── Schritt 1: Eingabe (Motivname* · Kategorie? · Region?)
+│   └── „Prompt erzeugen" → Prompt-Box mit „Kopieren"
+├── Schritt 2: KI-Antwort einfügen (Textarea)
+│   ├── Konfliktstrategie (Überspringen/Duplikat/Ersetzen)
+│   └── „Importieren" → Vorschau/Ergebnis (Toast) + Link zum Motiv
+└── Hinweis bei Fehlern: „Keine gültigen Motivdaten erkannt"
+```
+
+### B) Datenmodell
+```
+Kein neues Modell. Erzeugt einen Prompt (Text) und importiert eine
+KI-Antwort in das bestehende Motivpaket-Format (PROJ-4):
+data: { motive: [ein Motiv], saisonphasen: [...] }.
+Import schreibt in die Collections "motive" + "saisonphasen".
+```
+
+### C) Tech-Entscheidungen
+| Entscheidung | Warum |
+|--------------|-------|
+| Logik in `lib/ki.ts` | Prompt/Extraktion/Normalisierung testbar |
+| Wiederverwendung `mergeMotivpaket` | Konsistente Konfliktbehandlung |
+| Toleranter Parser + Sanitizing | Robust gegen uneinheitliche KI-Ausgabe |
+| Keine KI-API | KI-neutral, kostenlos |
+
+### D) Abhängigkeiten
+**Keine neuen Pakete.** Clipboard-API + shadcn/ui (input, textarea, select, radio-group, button, card) + bestehende Backup-Logik/Hooks.
+
+## Implementation Notes (Frontend)
+**Stand 2026-06-09 — UI implementiert, Build grün.**
+
+Neu: `src/lib/ki.ts` (reine Logik: `buildPrompt`, `extractJsonObject`, `normalizeKiImport` mit Sanitizing) + Seite `/ki-import` (Schritt 1 Prompt erzeugen/kopieren, Schritt 2 Antwort einfügen + Konfliktstrategie + Import). Import nutzt PROJ-4 `mergeMotivpaket` + Hook-`replaceAll`. Navigationspunkt aktiviert.
 
 ## QA Test Results
-_To be added by /qa_
+
+**Tested:** 2026-06-09 · **Tester:** QA Engineer (AI) · **Methode:** Code-Review + Unit (Vitest) + E2E (Playwright via System-Edge).
+
+### Acceptance Criteria Status
+- [x] Motivname → strukturierter Prompt mit Kopier-Button
+- [x] Kategorie/Region als Hinweise im Prompt enthalten
+- [x] Leerer Motivname → verhindert + Hinweis
+- [x] Gültige KI-Antwort → Import (Motiv + Saisonphasen) + Link zum Motiv
+- [x] Beifang-Text um JSON → automatisch herausgelöst
+- [x] Kein gültiges JSON → „Keine gültigen Motivdaten erkannt", nichts geändert
+- [x] Namenskonflikt → Überspringen/Duplikat/Ersetzen (PROJ-4-Logik)
+- [x] Ergebnismeldung nach Import
+
+### Edge Cases Status
+- [x] Unvollständige Daten: Pflicht (Name) erzwungen, ungültige Kategorie→„Tier"
+- [x] Ungültige KW in Phasen verworfen; Konfidenz→„mittel"
+- [x] Toleranter Parser (Envelope / {motive,saisonphasen} / einzelnes Motiv)
+
+### Security Audit Results
+- [x] Keine KI-API/Netzwerk; rein clientseitig (Clipboard + JSON-Parsing)
+- [x] Sanitizing schützt Bestand vor fehlerhafter KI-Ausgabe; neue IDs
+
+### Bugs Found
+Keine.
+
+### Summary
+- **Acceptance Criteria:** alle erfüllt · **Bugs:** 0
+- **Unit Tests:** 72/72 grün (inkl. 10 für `ki`)
+- **E2E Tests:** 47/47 grün (inkl. 5 PROJ-8) via System-Edge — keine Regressionen
+- **Security:** Pass · **Production Ready:** YES
 
 ## Deployment
 _To be added by /deploy_

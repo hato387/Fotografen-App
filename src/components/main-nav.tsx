@@ -27,7 +27,7 @@ const NAV_ITEMS: NavItem[] = [
   { label: "Fotospots", href: "/fotospots", icon: MapPin, ready: true },
   { label: "Einstellungen", href: "/fotoeinstellungen", icon: Camera, ready: true },
   { label: "Backup", href: "/backup", icon: Save, ready: true },
-  { label: "KI-Import", href: "/ki-import", icon: Sparkles, ready: false },
+  { label: "KI-Import", href: "/ki-import", icon: Sparkles, ready: true },
 ];
 
 export function MainNav() {

@@ -14,9 +14,10 @@ Ambitionierter Hobby-Naturfotograf (Einzelnutzer). **Pain Point heute:** Wissen 
 | P0 (MVP) | Saisonphasen je Motiv | Approved |
 | P0 (MVP) | Kalender (Woche + Jahres-Timeline, filterbar) | Approved |
 | P0 (MVP) | Backup/Import (JSON) | Approved |
-| P1 | Fotospots (inkl. Beobachtungen & Ideen) | Planned |
+| P1 | Fotospots (inkl. Beobachtungen & Ideen) | Approved |
 | ~~P1~~ | ~~Journal~~ (zusammengelegt mit Fotospots) | Entfällt |
-| P1 | Fotoeinstellungen (eigenständige Rezept-Sammlung) | Planned |
+| P1 | Fotoeinstellungen (eigenständige Rezept-Sammlung) | Approved |
+| P1 | KI-Motiv-Prompt-Generator | Approved |
 
 ## Success Metrics
 - Regelmäßige Nutzung zur Shooting-Planung

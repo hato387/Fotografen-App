@@ -22,7 +22,7 @@
 | PROJ-5 | Fotospots (inkl. Beobachtungen & Ideen) | Approved | [Spec](PROJ-5-fotospots.md) | 2026-06-09 |
 | PROJ-6 | Journal | ~~Zusammengelegt mit PROJ-5~~ | — | 2026-06-09 |
 | PROJ-7 | Fotoeinstellungen | Approved | [Spec](PROJ-7-fotoeinstellungen.md) | 2026-06-09 |
-| PROJ-8 | KI-Motiv-Prompt-Generator | Planned | [Spec](PROJ-8-ki-motiv-prompt-generator.md) | 2026-06-09 |
+| PROJ-8 | KI-Motiv-Prompt-Generator | Approved | [Spec](PROJ-8-ki-motiv-prompt-generator.md) | 2026-06-09 |
 
 <!-- Add features above this line -->
 
