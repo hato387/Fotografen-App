@@ -104,8 +104,11 @@ export function JahresTimeline({ rows, currentKW }: Props) {
                       )}
                       style={{ left: `${s.left}%`, width: `${s.width}%` }}
                     >
-                      {p.hoehepunkt && s.width > 6 && (
-                        <span className="text-[10px] leading-none">★</span>
+                      {/* Stern immer zeigen — auf schmalen Balken ragt er dezent über */}
+                      {p.hoehepunkt && (
+                        <span className="pointer-events-none text-[10px] leading-none">
+                          ★
+                        </span>
                       )}
                     </Link>
                   )),

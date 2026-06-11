@@ -1,6 +1,13 @@
 "use client";
 
-import { ArrowLeft, ExternalLink, MapPin, Pencil, Trash2 } from "lucide-react";
+import {
+  ArrowLeft,
+  ExternalLink,
+  ImageOff,
+  MapPin,
+  Pencil,
+  Trash2,
+} from "lucide-react";
 import Link from "next/link";
 import { useParams, useRouter } from "next/navigation";
 import { useState } from "react";
@@ -25,6 +32,7 @@ import { Skeleton } from "@/components/ui/skeleton";
 import { useFotospots } from "@/hooks/use-fotospots";
 import { useMotive } from "@/hooks/use-motive";
 import { hasCoords, mapUrl } from "@/lib/geo";
+import { isSafeHttpUrl } from "@/lib/url";
 
 export default function FotospotDetailPage() {
   const params = useParams<{ id: string }>();
@@ -33,6 +41,7 @@ export default function FotospotDetailPage() {
   const motive = useMotive();
   const [editOpen, setEditOpen] = useState(false);
   const [deleteOpen, setDeleteOpen] = useState(false);
+  const [imgError, setImgError] = useState(false);
 
   const loaded = spots.loaded && motive.loaded;
   const spot = spots.getById(params.id);
@@ -131,6 +140,23 @@ export default function FotospotDetailPage() {
           </Button>
         </div>
       </div>
+
+      {isSafeHttpUrl(spot.bildUrl) && !imgError && (
+        <div className="overflow-hidden rounded-2xl border border-border/60 bg-muted shadow-sm">
+          {/* eslint-disable-next-line @next/next/no-img-element */}
+          <img
+            src={spot.bildUrl}
+            alt={spot.name}
+            className="max-h-[26rem] w-full object-cover"
+            onError={() => setImgError(true)}
+          />
+        </div>
+      )}
+      {isSafeHttpUrl(spot.bildUrl) && imgError && (
+        <div className="flex items-center gap-2 rounded-2xl border border-dashed p-4 text-sm text-muted-foreground">
+          <ImageOff className="h-4 w-4" /> Bild-Link konnte nicht geladen werden.
+        </div>
+      )}
 
       <div className="space-y-5 rounded-2xl border border-border/60 bg-card/50 p-6">
         {verknuepfteMotive.length > 0 && (

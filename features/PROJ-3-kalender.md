@@ -166,6 +166,8 @@ Hinweise:
 - Reine Sicht — kein neues Datenmodell; liest Motive + Saisonphasen (je eine Hook-Instanz).
 - Status-Filter wirkt phasenweise relativ zur aktuellen KW; gilt für beide Ansichten.
 
+**Nachbesserung (2026-06-11):** Höhepunkt-Stern in der Jahres-Timeline erscheint jetzt auf **jeder** Balkenbreite (vorher nur >6 % Breite — dadurch wirkten Höhepunkte auf schmalen Phasen unsichtbar; vermutete Ursache des gemeldeten Filter-Problems). Balken-Stil unverändert.
+
 ## QA Test Results
 
 **Tested:** 2026-06-09 · **Tester:** QA Engineer (AI) · **Methode:** Code-Review + Unit (Vitest) + E2E (Playwright via System-Edge).

@@ -1,6 +1,13 @@
 "use client";
 
-import { ArrowLeft, ExternalLink, ImageOff, Pencil, Trash2 } from "lucide-react";
+import {
+  ArrowLeft,
+  ExternalLink,
+  ImageOff,
+  MapPin,
+  Pencil,
+  Trash2,
+} from "lucide-react";
 import Link from "next/link";
 import { useParams, useRouter } from "next/navigation";
 import { useState } from "react";
@@ -15,6 +22,7 @@ import { SaisonphasenSection } from "@/components/saisonphasen/saisonphasen-sect
 import { Badge } from "@/components/ui/badge";
 import { Button } from "@/components/ui/button";
 import { Skeleton } from "@/components/ui/skeleton";
+import { useFotospots } from "@/hooks/use-fotospots";
 import { useMotive } from "@/hooks/use-motive";
 import { useSaisonphasen } from "@/hooks/use-saisonphasen";
 import { isSafeHttpUrl } from "@/lib/url";
@@ -24,6 +32,7 @@ export default function MotivDetailPage() {
   const router = useRouter();
   const { loaded, getById, update, remove } = useMotive();
   const saisonStore = useSaisonphasen();
+  const spotsStore = useFotospots();
   const [editOpen, setEditOpen] = useState(false);
   const [deleteOpen, setDeleteOpen] = useState(false);
   const [imgError, setImgError] = useState(false);
@@ -67,11 +76,23 @@ export default function MotivDetailPage() {
   const phaseCount = saisonStore.items.filter(
     (p) => p.motivId === motiv.id,
   ).length;
+  const verknuepfteSpots = spotsStore.items.filter((s) =>
+    s.motivIds.includes(motiv.id),
+  );
 
   const handleDelete = () => {
     const name = motiv.name;
-    // Kaskade: zuerst die zugehörigen Saisonphasen entfernen.
+    // Kaskade: Saisonphasen löschen, Spot-Verknüpfungen bereinigen.
     if (phaseCount > 0) saisonStore.removeWhere((p) => p.motivId === motiv.id);
+    if (verknuepfteSpots.length > 0) {
+      spotsStore.replaceAll(
+        spotsStore.items.map((s) =>
+          s.motivIds.includes(motiv.id)
+            ? { ...s, motivIds: s.motivIds.filter((id) => id !== motiv.id) }
+            : s,
+        ),
+      );
+    }
     const ok = remove(motiv.id);
     if (!ok) {
       toast.error("Löschen fehlgeschlagen — bitte erneut versuchen.");
@@ -81,10 +102,21 @@ export default function MotivDetailPage() {
     router.push("/motive");
   };
 
+  const warnParts: string[] = [];
+  if (phaseCount > 0)
+    warnParts.push(
+      phaseCount === 1
+        ? "1 Saisonphase wird mitgelöscht"
+        : `${phaseCount} Saisonphasen werden mitgelöscht`,
+    );
+  if (verknuepfteSpots.length > 0)
+    warnParts.push(
+      verknuepfteSpots.length === 1
+        ? "die Verknüpfung bei 1 Fotospot wird entfernt"
+        : `die Verknüpfungen bei ${verknuepfteSpots.length} Fotospots werden entfernt`,
+    );
   const deleteWarning =
-    phaseCount > 0
-      ? `Dazu ${phaseCount === 1 ? "gehört 1 Saisonphase" : `gehören ${phaseCount} Saisonphasen`}, die ebenfalls gelöscht ${phaseCount === 1 ? "wird" : "werden"}.`
-      : undefined;
+    warnParts.length > 0 ? `Dazu: ${warnParts.join("; ")}.` : undefined;
 
   const showImage = isSafeHttpUrl(motiv.bildUrl) && !imgError;
   const hasContent = Boolean(
@@ -200,6 +232,32 @@ export default function MotivDetailPage() {
       {/* PROJ-2: Saisonphasen */}
       {saisonStore.loaded && (
         <SaisonphasenSection motivId={motiv.id} store={saisonStore} />
+      )}
+
+      {/* PROJ-5: Fotospots, an denen dieses Motiv verknüpft ist */}
+      {spotsStore.loaded && verknuepfteSpots.length > 0 && (
+        <section className="rounded-2xl border border-border/60 bg-card/50 p-6">
+          <h2 className="mb-3 flex items-center gap-2 font-semibold">
+            <MapPin className="h-5 w-5 text-primary" />
+            Fotospots mit diesem Motiv
+            <span className="text-sm font-normal text-muted-foreground">
+              ({verknuepfteSpots.length})
+            </span>
+          </h2>
+          <div className="flex flex-wrap gap-2">
+            {verknuepfteSpots.map((s) => (
+              <Button
+                key={s.id}
+                asChild
+                variant="secondary"
+                size="sm"
+                className="rounded-full"
+              >
+                <Link href={`/fotospots/${s.id}`}>{s.name}</Link>
+              </Button>
+            ))}
+          </div>
+        </section>
       )}
 
       <p className="text-xs text-muted-foreground">

@@ -154,6 +154,8 @@ NICHT Teil geteilter Motivpakete (Datenschutz).
 
 Neu: Collection `naturfoto:fotospots` + `Fotospot`-Typ; `useFotospots`; `src/lib/geo.ts` (Validierung lat/lng, `parseCoord` mit Komma-Toleranz, OSM-`mapUrl`); Komponenten `src/components/fotospots/` (Formular-Dialog mit Koordinaten-Validierung & Bild-URL-Härtung, `MotivMultiSelect` via Popover+Command, Karte); ausgelagerter `src/components/tag-input.tsx`; Seiten `/fotospots` (Übersicht) + `/fotospots/[id]` (Detail mit Karten-Link & Motiv-Chips). Navigationspunkt aktiviert.
 
+**Nachbesserungen (2026-06-11):** (1) Bild-Link wird jetzt auf der Spot-Detailseite angezeigt (war erfasst, aber nie gerendert — Mängelliste #2). (2) Motiv-Detailseite zeigt „Fotospots mit diesem Motiv" (Rückrichtung, #4). (3) Motiv-Löschen bereinigt `motivIds` in Fotospots und zählt betroffene Spots in der Lösch-Warnung (#5).
+
 ## QA Test Results
 
 **Tested:** 2026-06-09 · **Tester:** QA Engineer (AI) · **Methode:** Code-Review + Unit (Vitest) + E2E (Playwright via System-Edge).

@@ -135,6 +135,8 @@ Import schreibt in die Collections "motive" + "saisonphasen".
 
 Neu: `src/lib/ki.ts` (reine Logik: `buildPrompt`, `extractJsonObject`, `normalizeKiImport` mit Sanitizing) + Seite `/ki-import` (Schritt 1 Prompt erzeugen/kopieren, Schritt 2 Antwort einfügen + Konfliktstrategie + Import). Import nutzt PROJ-4 `mergeMotivpaket` + Hook-`replaceAll`. Navigationspunkt aktiviert.
 
+**Nachbesserung (2026-06-11):** Vorschau-Schritt ergänzt (Mängelliste #1, Spec-Abweichung behoben): „Vorschau anzeigen" parst die Antwort und zeigt erkannte Felder/Tags/Quellen + Saisonphasen-Liste; Import erst nach Bestätigung. Vorschau wird bei Änderung der Antwort verworfen.
+
 ## QA Test Results
 
 **Tested:** 2026-06-09 · **Tester:** QA Engineer (AI) · **Methode:** Code-Review + Unit (Vitest) + E2E (Playwright via System-Edge).

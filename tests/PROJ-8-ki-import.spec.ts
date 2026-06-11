@@ -41,12 +41,17 @@ test("verlangt einen Motivnamen", async ({ page }) => {
   ).toBeVisible();
 });
 
-test("importiert eine gültige KI-Antwort und verlinkt das Motiv", async ({
+test("zeigt eine Vorschau und importiert erst nach Bestätigung", async ({
   page,
 }) => {
   await page.getByLabel("KI-Antwort").fill(envelope("Rotmilan"));
-  await page.getByRole("button", { name: "Importieren" }).click();
+  await page.getByRole("button", { name: "Vorschau anzeigen" }).click();
 
+  // Vorschau zeigt die erkannten Daten, noch kein Import
+  await expect(page.getByText(/Erkannt: „Rotmilan/)).toBeVisible();
+  await expect(page.getByText(/KW 10–14/)).toBeVisible();
+
+  await page.getByRole("button", { name: "Importieren" }).click();
   await page.getByRole("link", { name: /Zum importierten Motiv/ }).click();
   await expect(page.getByRole("heading", { name: "Rotmilan" })).toBeVisible();
   await expect(page.getByText("Ein farbenprächtiger Vogel.")).toBeVisible();
@@ -55,6 +60,7 @@ test("importiert eine gültige KI-Antwort und verlinkt das Motiv", async ({
 test("löst JSON aus umgebendem Text (Beifang)", async ({ page }) => {
   const text = `Klar! Hier sind die Daten:\n\n${envelope("Schwarzmilan")}\n\nViel Erfolg!`;
   await page.getByLabel("KI-Antwort").fill(text);
+  await page.getByRole("button", { name: "Vorschau anzeigen" }).click();
   await page.getByRole("button", { name: "Importieren" }).click();
 
   await page.goto("/motive");
@@ -65,7 +71,7 @@ test("löst JSON aus umgebendem Text (Beifang)", async ({ page }) => {
 
 test("zeigt einen Fehler bei ungültiger Antwort", async ({ page }) => {
   await page.getByLabel("KI-Antwort").fill("nur Text, kein JSON");
-  await page.getByRole("button", { name: "Importieren" }).click();
+  await page.getByRole("button", { name: "Vorschau anzeigen" }).click();
   await expect(
     page.getByText("Keine gültigen Motivdaten erkannt."),
   ).toBeVisible();

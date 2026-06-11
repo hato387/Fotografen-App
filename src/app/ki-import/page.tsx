@@ -25,8 +25,13 @@ import {
 import { Textarea } from "@/components/ui/textarea";
 import { useMotive } from "@/hooks/use-motive";
 import { useSaisonphasen } from "@/hooks/use-saisonphasen";
-import { mergeMotivpaket, type Konfliktstrategie } from "@/lib/backup";
+import {
+  mergeMotivpaket,
+  type BackupData,
+  type Konfliktstrategie,
+} from "@/lib/backup";
 import { buildPrompt, extractJsonObject, normalizeKiImport } from "@/lib/ki";
+import { kwSpanne } from "@/lib/kw";
 import { Kategorie, KATEGORIEN } from "@/lib/types";
 
 export default function KiImportPage() {
@@ -42,6 +47,7 @@ export default function KiImportPage() {
   const [response, setResponse] = useState("");
   const [strategie, setStrategie] =
     useState<Konfliktstrategie>("ueberspringen");
+  const [preview, setPreview] = useState<BackupData | null>(null);
   const [lastImportedId, setLastImportedId] = useState<string | null>(null);
 
   const erzeugePrompt = () => {
@@ -64,35 +70,40 @@ export default function KiImportPage() {
     }
   };
 
-  const importieren = () => {
+  const vorschauAnzeigen = () => {
     setLastImportedId(null);
     try {
-      const data = normalizeKiImport(extractJsonObject(response));
-      const merge = mergeMotivpaket(
-        { motive: motive.items, saisonphasen: saison.items },
-        data,
-        strategie,
-      );
-      const ok =
-        motive.replaceAll(merge.motive) &&
-        saison.replaceAll(merge.saisonphasen);
-      if (!ok) {
-        toast.error("Import fehlgeschlagen — Speicher möglicherweise voll.");
-        return;
-      }
-      const existingIds = new Set(motive.items.map((m) => m.id));
-      const neu = merge.motive.find(
-        (m) => !existingIds.has(m.id) && m.name === data.motive[0].name,
-      );
-      setLastImportedId(neu?.id ?? null);
-      toast.success(
-        `Import: ${merge.summary.hinzugefuegt} hinzugefügt, ${merge.summary.ersetzt} ersetzt, ${merge.summary.uebersprungen} übersprungen · ${data.saisonphasen.length} Saisonphasen.`,
-      );
+      setPreview(normalizeKiImport(extractJsonObject(response)));
     } catch (err) {
+      setPreview(null);
       toast.error(
         err instanceof Error ? err.message : "Keine gültigen Motivdaten erkannt.",
       );
     }
+  };
+
+  const importieren = () => {
+    if (!preview) return;
+    const merge = mergeMotivpaket(
+      { motive: motive.items, saisonphasen: saison.items },
+      preview,
+      strategie,
+    );
+    const ok =
+      motive.replaceAll(merge.motive) && saison.replaceAll(merge.saisonphasen);
+    if (!ok) {
+      toast.error("Import fehlgeschlagen — Speicher möglicherweise voll.");
+      return;
+    }
+    const existingIds = new Set(motive.items.map((m) => m.id));
+    const neu = merge.motive.find(
+      (m) => !existingIds.has(m.id) && m.name === preview.motive[0].name,
+    );
+    setLastImportedId(neu?.id ?? null);
+    setPreview(null);
+    toast.success(
+      `Import: ${merge.summary.hinzugefuegt} hinzugefügt, ${merge.summary.ersetzt} ersetzt, ${merge.summary.uebersprungen} übersprungen · ${preview.saisonphasen.length} Saisonphasen.`,
+    );
   };
 
   return (
@@ -203,42 +214,23 @@ export default function KiImportPage() {
         <CardContent className="space-y-4">
           <Textarea
             value={response}
-            onChange={(e) => setResponse(e.target.value)}
+            onChange={(e) => {
+              setResponse(e.target.value);
+              setPreview(null); // alte Vorschau gilt nicht mehr
+            }}
             rows={8}
             placeholder="KI-Antwort hier einfügen…"
             aria-label="KI-Antwort"
             className="font-mono text-xs"
           />
 
-          <div className="space-y-2">
-            <Label className="text-xs text-muted-foreground">
-              Bei Namenskonflikt:
-            </Label>
-            <RadioGroup
-              value={strategie}
-              onValueChange={(v) => setStrategie(v as Konfliktstrategie)}
-              className="gap-1"
-            >
-              {(
-                [
-                  ["ueberspringen", "Überspringen"],
-                  ["duplikat", "Als Duplikat hinzufügen"],
-                  ["ersetzen", "Bestehendes ersetzen"],
-                ] as const
-              ).map(([val, label]) => (
-                <div key={val} className="flex items-center gap-2">
-                  <RadioGroupItem value={val} id={`ki-${val}`} />
-                  <Label htmlFor={`ki-${val}`} className="cursor-pointer">
-                    {label}
-                  </Label>
-                </div>
-              ))}
-            </RadioGroup>
-          </div>
-
           <div className="flex items-center gap-3">
-            <Button onClick={importieren} disabled={!response.trim()}>
-              Importieren
+            <Button
+              variant={preview ? "outline" : "default"}
+              onClick={vorschauAnzeigen}
+              disabled={!response.trim()}
+            >
+              Vorschau anzeigen
             </Button>
             {lastImportedId && (
               <Button asChild variant="link">
@@ -248,8 +240,80 @@ export default function KiImportPage() {
               </Button>
             )}
           </div>
+
+          {preview && (
+            <div className="space-y-4 rounded-lg border bg-muted/30 p-4">
+              <ImportVorschau data={preview} />
+
+              <div className="space-y-2">
+                <Label className="text-xs text-muted-foreground">
+                  Bei Namenskonflikt:
+                </Label>
+                <RadioGroup
+                  value={strategie}
+                  onValueChange={(v) => setStrategie(v as Konfliktstrategie)}
+                  className="gap-1"
+                >
+                  {(
+                    [
+                      ["ueberspringen", "Überspringen"],
+                      ["duplikat", "Als Duplikat hinzufügen"],
+                      ["ersetzen", "Bestehendes ersetzen"],
+                    ] as const
+                  ).map(([val, label]) => (
+                    <div key={val} className="flex items-center gap-2">
+                      <RadioGroupItem value={val} id={`ki-${val}`} />
+                      <Label htmlFor={`ki-${val}`} className="cursor-pointer">
+                        {label}
+                      </Label>
+                    </div>
+                  ))}
+                </RadioGroup>
+              </div>
+
+              <Button onClick={importieren}>Importieren</Button>
+            </div>
+          )}
         </CardContent>
       </Card>
+    </div>
+  );
+}
+
+/** Kompakte Vorschau der erkannten Motivdaten vor dem Import. */
+function ImportVorschau({ data }: { data: BackupData }) {
+  const m = data.motive[0];
+  const felder = [
+    m.beschreibung && "Beschreibung",
+    m.verhalten && "Verhalten",
+    m.lebensraum && "Lebensraum",
+    m.fototipps && "Fototipps",
+    m.ethikhinweise && "Ethikhinweise",
+  ].filter(Boolean) as string[];
+
+  return (
+    <div className="space-y-2 text-sm">
+      <div className="font-medium">
+        Erkannt: „{m.name}" · {m.kategorie}
+      </div>
+      <div className="text-muted-foreground">
+        {felder.length > 0 ? `Gefüllte Felder: ${felder.join(", ")}` : "Keine Textfelder gefüllt"}
+        {m.tags.length > 0 && ` · ${m.tags.length} Tags`}
+        {m.quellen.length > 0 && ` · ${m.quellen.length} Quellen`}
+      </div>
+      {data.saisonphasen.length > 0 ? (
+        <ul className="list-inside list-disc text-muted-foreground">
+          {data.saisonphasen.map((p) => (
+            <li key={p.id}>
+              {p.bezeichnung || "Aktive Zeit"} · {kwSpanne(p.startKW, p.endKW)} ·{" "}
+              {p.konfidenz}
+              {p.hoehepunkt && " · ★ Höhepunkt"}
+            </li>
+          ))}
+        </ul>
+      ) : (
+        <p className="text-muted-foreground">Keine Saisonphasen enthalten.</p>
+      )}
     </div>
   );
 }
