@@ -84,7 +84,7 @@ export default function FotoeinstellungenPage() {
           <div>
             <div className="flex items-center gap-2">
               <h1 className="text-2xl font-semibold tracking-tight">
-                Fotoeinstellungen
+                Fotoeinstellungen – Kamera-Rezepte
               </h1>
               {store.loaded && store.items.length > 0 && (
                 <Badge variant="secondary" className="rounded-full font-normal">
@@ -93,7 +93,7 @@ export default function FotoeinstellungenPage() {
               )}
             </div>
             <p className="text-sm text-muted-foreground">
-              Deine Sammlung an Kamera-Rezepten.
+              Bewährte Blende/Zeit/ISO/Brennweite je Aufnahmesituation.
             </p>
           </div>
         </div>

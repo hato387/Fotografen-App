@@ -56,7 +56,9 @@ export default function MotivePage() {
           </div>
           <div>
             <div className="flex items-center gap-2">
-              <h1 className="text-2xl font-semibold tracking-tight">Motive</h1>
+              <h1 className="text-2xl font-semibold tracking-tight">
+                Motive – Arten &amp; Landschaften
+              </h1>
               {loaded && items.length > 0 && (
                 <Badge variant="secondary" className="rounded-full font-normal">
                   {items.length}
@@ -64,7 +66,7 @@ export default function MotivePage() {
               )}
             </div>
             <p className="text-sm text-muted-foreground">
-              Deine Sammlung an Arten und Landschaften.
+              Beschreibung, Verhalten, Fototipps &amp; Saisonphasen – an einem Ort.
             </p>
           </div>
         </div>

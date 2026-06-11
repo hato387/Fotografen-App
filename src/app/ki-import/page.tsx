@@ -102,7 +102,9 @@ export default function KiImportPage() {
           <Sparkles className="h-6 w-6 text-primary" />
         </div>
         <div>
-          <h1 className="text-2xl font-semibold tracking-tight">KI-Import</h1>
+          <h1 className="text-2xl font-semibold tracking-tight">
+            KI-Motiv-Import
+          </h1>
           <p className="text-sm text-muted-foreground">
             Motiv per KI fachlich befüllen — Prompt erzeugen, Antwort
             importieren.

@@ -2,6 +2,7 @@ import type { Metadata } from "next";
 import { Inter } from "next/font/google";
 import "./globals.css";
 import { MainNav } from "@/components/main-nav";
+import { PageTitle } from "@/components/page-title";
 import { ThemeProvider } from "@/components/theme-provider";
 import { Toaster } from "@/components/ui/sonner";
 
@@ -30,6 +31,7 @@ export default function RootLayout({
           enableSystem
           disableTransitionOnChange
         >
+          <PageTitle />
           <MainNav />
           <main className="mx-auto max-w-6xl px-4 py-6">{children}</main>
           <Toaster />

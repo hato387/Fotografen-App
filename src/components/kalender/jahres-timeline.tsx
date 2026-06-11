@@ -50,6 +50,18 @@ export function JahresTimeline({ rows, currentKW }: Props) {
 
   return (
     <div className="overflow-x-auto">
+      {/* Legende */}
+      <div className="mb-2 flex flex-wrap items-center gap-x-4 gap-y-1 text-xs text-muted-foreground">
+        <span className="inline-flex items-center gap-1">
+          <span className="text-amber-500">★</span> Höhepunkt
+        </span>
+        <span className="inline-flex items-center gap-1">
+          <span className="inline-block h-3 w-px bg-primary/70" /> heute (KW{" "}
+          {currentKW})
+        </span>
+        <span>blasser = niedrige Konfidenz</span>
+      </div>
+
       <div className="min-w-[680px] space-y-1.5">
         {/* Monats-Kopf */}
         <div className="flex">
@@ -97,15 +109,18 @@ export function JahresTimeline({ rows, currentKW }: Props) {
                       href={`/motive/${motiv.id}`}
                       title={`${p.bezeichnung || "Aktive Zeit"} · ${kwSpanne(p.startKW, p.endKW)} · ${p.konfidenz}`}
                       className={cn(
-                        "absolute inset-y-1 flex items-center justify-center rounded",
+                        "absolute inset-y-1 flex items-center justify-center overflow-visible rounded",
                         meta.barClass,
                         p.konfidenz === "niedrig" && "opacity-50",
-                        p.hoehepunkt && "ring-2 ring-amber-400 ring-offset-1",
+                        p.hoehepunkt &&
+                          "ring-2 ring-amber-400 ring-offset-1 ring-offset-background",
                       )}
                       style={{ left: `${s.left}%`, width: `${s.width}%` }}
                     >
-                      {p.hoehepunkt && s.width > 6 && (
-                        <span className="text-[10px] leading-none">★</span>
+                      {p.hoehepunkt && (
+                        <span className="pointer-events-none absolute -top-2 left-1/2 -translate-x-1/2 text-[11px] leading-none text-amber-500 drop-shadow-sm">
+                          ★
+                        </span>
                       )}
                     </Link>
                   )),

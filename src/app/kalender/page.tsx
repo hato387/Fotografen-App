@@ -80,7 +80,9 @@ export default function KalenderPage() {
           <CalendarRange className="h-6 w-6 text-primary" />
         </div>
         <div>
-          <h1 className="text-2xl font-semibold tracking-tight">Kalender</h1>
+          <h1 className="text-2xl font-semibold tracking-tight">
+            Saison-Kalender
+          </h1>
           <p className="text-sm text-muted-foreground">
             Was lohnt sich wann? Wochenansicht &amp; Jahres-Timeline.
           </p>

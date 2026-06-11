@@ -59,7 +59,9 @@ export default function FotospotsPage() {
           </div>
           <div>
             <div className="flex items-center gap-2">
-              <h1 className="text-2xl font-semibold tracking-tight">Fotospots</h1>
+              <h1 className="text-2xl font-semibold tracking-tight">
+                Fotospots &amp; Beobachtungen
+              </h1>
               {loaded && spots.items.length > 0 && (
                 <Badge variant="secondary" className="rounded-full font-normal">
                   {spots.items.length}
@@ -67,7 +69,7 @@ export default function FotospotsPage() {
               )}
             </div>
             <p className="text-sm text-muted-foreground">
-              Orte, Beobachtungen und Fotoideen — mit optionalem GPS.
+              Deine Orte mit GPS, verknüpften Motiven und Fotoideen.
             </p>
           </div>
         </div>
