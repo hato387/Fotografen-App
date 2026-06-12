@@ -113,6 +113,8 @@ Abweichungen/Hinweise:
 - Lösch-Dialog warnt bereits generisch vor verknüpften Daten; die konkrete Zählung folgt mit PROJ-2/5/7.
 - Kein Backend (reines localStorage) → nächster Schritt ist QA, nicht `/backend`.
 
+**Nachbesserungen (2026-06-12):** Dezenter **Duplikat-Hinweis** im Motiv-Formular bei Namensgleichheit (Edge Case aus Spec, Mängelliste #8). Motiv-Löschen mit **„Rückgängig"-Toast** (stellt Motiv, Saisonphasen und Spot-Verknüpfungen wieder her, #10). ESLint auf Flat-Config migriert, `npm run lint` läuft wieder (0 Probleme, #12).
+
 ---
 <!-- Sections below are added by subsequent skills -->
 

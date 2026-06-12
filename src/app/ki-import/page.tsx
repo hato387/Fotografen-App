@@ -32,6 +32,7 @@ import {
 } from "@/lib/backup";
 import { buildPrompt, extractJsonObject, normalizeKiImport } from "@/lib/ki";
 import { kwSpanne } from "@/lib/kw";
+import { replaceCollections } from "@/lib/storage";
 import { Kategorie, KATEGORIEN } from "@/lib/types";
 
 export default function KiImportPage() {
@@ -89,8 +90,10 @@ export default function KiImportPage() {
       preview,
       strategie,
     );
-    const ok =
-      motive.replaceAll(merge.motive) && saison.replaceAll(merge.saisonphasen);
+    const ok = replaceCollections({
+      motive: merge.motive,
+      saisonphasen: merge.saisonphasen,
+    });
     if (!ok) {
       toast.error("Import fehlgeschlagen — Speicher möglicherweise voll.");
       return;
@@ -294,7 +297,7 @@ function ImportVorschau({ data }: { data: BackupData }) {
   return (
     <div className="space-y-2 text-sm">
       <div className="font-medium">
-        Erkannt: „{m.name}" · {m.kategorie}
+        Erkannt: „{m.name}“ · {m.kategorie}
       </div>
       <div className="text-muted-foreground">
         {felder.length > 0 ? `Gefüllte Felder: ${felder.join(", ")}` : "Keine Textfelder gefüllt"}

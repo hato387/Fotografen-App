@@ -33,6 +33,7 @@ import {
   mergeMotivpaket,
   parseEnvelope,
 } from "@/lib/backup";
+import { replaceCollections } from "@/lib/storage";
 
 function downloadJson(filename: string, obj: unknown) {
   const blob = new Blob([JSON.stringify(obj, null, 2)], {
@@ -68,7 +69,8 @@ export default function BackupPage() {
   const toggle = (id: string) =>
     setSelected((prev) => {
       const next = new Set(prev);
-      next.has(id) ? next.delete(id) : next.add(id);
+      if (next.has(id)) next.delete(id);
+      else next.add(id);
       return next;
     });
 
@@ -114,30 +116,33 @@ export default function BackupPage() {
     const { envelope } = preview;
 
     if (envelope.type === "vollbackup") {
-      const ok =
-        motive.replaceAll(envelope.data.motive) &&
-        saison.replaceAll(envelope.data.saisonphasen) &&
-        spots.replaceAll(envelope.data.fotospots ?? []) &&
-        settings.replaceAll(envelope.data.fotoeinstellungen ?? []);
-      ok
-        ? toast.success(
-            `Vollbackup wiederhergestellt (${envelope.data.motive.length} Motive).`,
-          )
-        : toast.error("Import fehlgeschlagen — Speicher möglicherweise voll.");
+      // Atomar: bei Fehler wird komplett zurückgerollt (kein Teilzustand).
+      const ok = replaceCollections({
+        motive: envelope.data.motive,
+        saisonphasen: envelope.data.saisonphasen,
+        fotospots: envelope.data.fotospots ?? [],
+        fotoeinstellungen: envelope.data.fotoeinstellungen ?? [],
+      });
+      if (ok)
+        toast.success(
+          `Vollbackup wiederhergestellt (${envelope.data.motive.length} Motive).`,
+        );
+      else toast.error("Import fehlgeschlagen — Speicher möglicherweise voll.");
     } else {
       const merge = mergeMotivpaket(
         { motive: motive.items, saisonphasen: saison.items },
         envelope.data,
         strategie,
       );
-      const ok =
-        motive.replaceAll(merge.motive) &&
-        saison.replaceAll(merge.saisonphasen);
-      ok
-        ? toast.success(
-            `Import: ${merge.summary.hinzugefuegt} hinzugefügt, ${merge.summary.ersetzt} ersetzt, ${merge.summary.uebersprungen} übersprungen.`,
-          )
-        : toast.error("Import fehlgeschlagen — Speicher möglicherweise voll.");
+      const ok = replaceCollections({
+        motive: merge.motive,
+        saisonphasen: merge.saisonphasen,
+      });
+      if (ok)
+        toast.success(
+          `Import: ${merge.summary.hinzugefuegt} hinzugefügt, ${merge.summary.ersetzt} ersetzt, ${merge.summary.uebersprungen} übersprungen.`,
+        );
+      else toast.error("Import fehlgeschlagen — Speicher möglicherweise voll.");
     }
     setPreview(null);
   };

@@ -6,6 +6,7 @@ import {
   createId,
   readCollection,
   storageKey,
+  subscribeCollection,
   writeCollection,
 } from "@/lib/storage";
 
@@ -43,18 +44,25 @@ export function useLocalCollection<T extends Entity>(
   const [loaded, setLoaded] = useState(false);
   const [error, setError] = useState<string | null>(null);
 
-  // Erstes Laden + Reaktion auf Änderungen aus anderen Tabs.
+  // Erstes Laden + Reaktion auf Änderungen aus diesem Tab (Pub/Sub,
+  // hält mehrere Hook-Instanzen synchron) und aus anderen Tabs (storage-Event).
   useEffect(() => {
-    setItems(readCollection<T>(collection));
+    const refresh = () => setItems(readCollection<T>(collection));
+    refresh();
+    // localStorage ist erst im Browser lesbar — das initiale Einlesen im
+    // Effect (inkl. loaded-Flag) ist hier gewollt (Hydration-sicher).
+    // eslint-disable-next-line react-hooks/set-state-in-effect
     setLoaded(true);
 
+    const unsubscribe = subscribeCollection(collection, refresh);
     const onStorage = (e: StorageEvent) => {
-      if (e.key === storageKey(collection)) {
-        setItems(readCollection<T>(collection));
-      }
+      if (e.key === storageKey(collection)) refresh();
     };
     window.addEventListener("storage", onStorage);
-    return () => window.removeEventListener("storage", onStorage);
+    return () => {
+      unsubscribe();
+      window.removeEventListener("storage", onStorage);
+    };
   }, [collection]);
 
   const persist = useCallback(

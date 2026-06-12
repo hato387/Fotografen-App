@@ -17,8 +17,7 @@ async function createMotivAndOpen(page: Page, name: string) {
 
 async function pickKw(page: Page, label: RegExp, week: number) {
   const dialog = page.getByRole("dialog");
-  await dialog.getByRole("combobox", { name: label }).click();
-  await page.getByRole("option", { name: new RegExp(`^KW ${week} `) }).click();
+  await dialog.getByLabel(label).fill(String(week));
 }
 
 async function addPhase(
@@ -74,8 +73,25 @@ test("weist auf den Jahresübergang hin (Start > Ende)", async ({ page }) => {
   await page.getByRole("button", { name: "Hinzufügen" }).click();
   await pickKw(page, /Start-KW/, 48);
   await pickKw(page, /End-KW/, 6);
+  // Monatsanzeige zur Orientierung (AC: Monat neben KW sichtbar)
+  await expect(page.getByText("≈ Nov")).toBeVisible();
+  await expect(page.getByText("≈ Feb")).toBeVisible();
   await expect(
     page.getByText("Diese Phase läuft über den Jahreswechsel (Dez → Jan)."),
+  ).toBeVisible();
+});
+
+test("weist eine ungültige KW ab", async ({ page }) => {
+  await createMotivAndOpen(page, "Eisvogel");
+  await page.getByRole("button", { name: "Hinzufügen" }).click();
+  await pickKw(page, /Start-KW/, 99);
+  await pickKw(page, /End-KW/, 4);
+  await page
+    .getByRole("dialog")
+    .getByRole("button", { name: "Speichern" })
+    .click();
+  await expect(
+    page.getByText("Bitte eine Kalenderwoche zwischen 1 und 53 angeben."),
   ).toBeVisible();
 });
 

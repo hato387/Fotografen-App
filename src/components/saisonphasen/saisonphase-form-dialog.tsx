@@ -2,7 +2,7 @@
 
 import { zodResolver } from "@hookform/resolvers/zod";
 import { useEffect } from "react";
-import { useForm } from "react-hook-form";
+import { useForm, useWatch } from "react-hook-form";
 import { z } from "zod";
 import { Button } from "@/components/ui/button";
 import {
@@ -32,7 +32,7 @@ import {
 } from "@/components/ui/select";
 import { Switch } from "@/components/ui/switch";
 import { Textarea } from "@/components/ui/textarea";
-import { ALLE_KW, istJahresuebergang, kwLabel } from "@/lib/kw";
+import { istJahresuebergang, kwToMonat, MAX_KW, MIN_KW } from "@/lib/kw";
 import { Konfidenz, KONFIDENZEN, Saisonphase } from "@/lib/types";
 
 /** Bereinigte Eingabedaten einer Phase (ohne id/motivId/Zeitstempel). */
@@ -46,10 +46,19 @@ export interface SaisonphaseInput {
   notiz?: string;
 }
 
+// KW als String-Feld (Direkteingabe), validiert auf ganze Zahl 1–53.
+const kwString = z.string().refine(
+  (v) => {
+    const n = Number(v);
+    return v.trim() !== "" && Number.isInteger(n) && n >= MIN_KW && n <= MAX_KW;
+  },
+  { message: `Bitte eine Kalenderwoche zwischen ${MIN_KW} und ${MAX_KW} angeben.` },
+);
+
 const formSchema = z.object({
   bezeichnung: z.string(),
-  startKW: z.number().int().min(1).max(53),
-  endKW: z.number().int().min(1).max(53),
+  startKW: kwString,
+  endKW: kwString,
   region: z.string(),
   konfidenz: z.enum(["niedrig", "mittel", "hoch"]),
   hoehepunkt: z.boolean(),
@@ -61,8 +70,8 @@ type FormValues = z.infer<typeof formSchema>;
 function emptyValues(): FormValues {
   return {
     bezeichnung: "",
-    startKW: 1,
-    endKW: 1,
+    startKW: "1",
+    endKW: "1",
     region: "",
     konfidenz: "mittel",
     hoehepunkt: false,
@@ -73,8 +82,8 @@ function emptyValues(): FormValues {
 function phaseToValues(p: Saisonphase): FormValues {
   return {
     bezeichnung: p.bezeichnung ?? "",
-    startKW: p.startKW,
-    endKW: p.endKW,
+    startKW: String(p.startKW),
+    endKW: String(p.endKW),
     region: p.region ?? "",
     konfidenz: p.konfidenz,
     hoehepunkt: p.hoehepunkt,
@@ -109,14 +118,23 @@ export function SaisonphaseFormDialog({
     if (open) form.reset(phase ? phaseToValues(phase) : emptyValues());
   }, [open, phase, form]);
 
-  const startKW = form.watch("startKW");
-  const endKW = form.watch("endKW");
+  const startKW = Number(
+    useWatch({ control: form.control, name: "startKW" }),
+  );
+  const endKW = Number(useWatch({ control: form.control, name: "endKW" }));
+  const beideGueltig =
+    Number.isInteger(startKW) &&
+    Number.isInteger(endKW) &&
+    startKW >= MIN_KW &&
+    startKW <= MAX_KW &&
+    endKW >= MIN_KW &&
+    endKW <= MAX_KW;
 
   const handleSubmit = form.handleSubmit((values) => {
     onSubmit({
       bezeichnung: clean(values.bezeichnung),
-      startKW: values.startKW,
-      endKW: values.endKW,
+      startKW: Number(values.startKW),
+      endKW: Number(values.endKW),
       region: clean(values.region),
       konfidenz: values.konfidenz,
       hoehepunkt: values.hoehepunkt,
@@ -139,7 +157,9 @@ export function SaisonphaseFormDialog({
         </DialogHeader>
 
         <Form {...form}>
-          <form onSubmit={handleSubmit} className="space-y-4">
+          {/* noValidate: Zod validiert (einheitliche deutsche Meldungen),
+              nicht die native Browser-Validierung des Zahlenfelds. */}
+          <form onSubmit={handleSubmit} noValidate className="space-y-4">
             <FormField
               control={form.control}
               name="bezeichnung"
@@ -158,7 +178,7 @@ export function SaisonphaseFormDialog({
               <KwField form={form} name="startKW" label="Start-KW *" />
               <KwField form={form} name="endKW" label="End-KW *" />
             </div>
-            {istJahresuebergang(startKW, endKW) && (
+            {beideGueltig && istJahresuebergang(startKW, endKW) && (
               <p className="text-xs text-muted-foreground">
                 Diese Phase läuft über den Jahreswechsel (Dez → Jan).
               </p>
@@ -262,7 +282,7 @@ export function SaisonphaseFormDialog({
   );
 }
 
-/** KW-Auswahl 1–53 mit Monatsanzeige. */
+/** KW-Direkteingabe (1–53) mit Live-Monatsanzeige zur Orientierung. */
 function KwField({
   form,
   name,
@@ -276,29 +296,33 @@ function KwField({
     <FormField
       control={form.control}
       name={name}
-      render={({ field }) => (
-        <FormItem>
-          <FormLabel>{label}</FormLabel>
-          <Select
-            value={String(field.value)}
-            onValueChange={(v) => field.onChange(Number(v))}
-          >
+      render={({ field }) => {
+        const n = Number(field.value);
+        const gueltig =
+          field.value !== "" &&
+          Number.isInteger(n) &&
+          n >= MIN_KW &&
+          n <= MAX_KW;
+        return (
+          <FormItem>
+            <FormLabel>{label}</FormLabel>
             <FormControl>
-              <SelectTrigger>
-                <SelectValue />
-              </SelectTrigger>
+              <Input
+                type="number"
+                inputMode="numeric"
+                min={MIN_KW}
+                max={MAX_KW}
+                placeholder="1–53"
+                {...field}
+              />
             </FormControl>
-            <SelectContent className="max-h-72">
-              {ALLE_KW.map((w) => (
-                <SelectItem key={w} value={String(w)}>
-                  {kwLabel(w)}
-                </SelectItem>
-              ))}
-            </SelectContent>
-          </Select>
-          <FormMessage />
-        </FormItem>
-      )}
+            <FormDescription>
+              {gueltig ? `≈ ${kwToMonat(n)}` : "Kalenderwoche 1–53"}
+            </FormDescription>
+            <FormMessage />
+          </FormItem>
+        );
+      }}
     />
   );
 }

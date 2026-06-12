@@ -155,6 +155,8 @@ Neu:
 - **Speicher-Hook** um `replaceAll()` erweitert (atomares Restore/Merge).
 - Export = Blob-Download; Import = versteckter File-Input + `FileReader`. Vollbackup-Import hinter Bestätigungsdialog.
 
+**Nachbesserung (2026-06-12):** Restore/Import jetzt **atomar** über `replaceCollections()` in der Speicher-Schicht (alle Collections in einem Vorgang, mit Rollback bei Fehler — Mängelliste #9). Gleiche Funktion treibt auch das neue Lösch-Undo (#10) und den KI-Import an.
+
 ## QA Test Results
 
 **Tested:** 2026-06-09 · **Tester:** QA Engineer (AI) · **Methode:** Code-Review + Unit (Vitest) + E2E (Playwright via System-Edge).

@@ -35,6 +35,29 @@ export function readCollection<T>(collection: CollectionKey): T[] {
   }
 }
 
+// Same-Tab-Pub/Sub: hält alle Hook-Instanzen einer Collection synchron
+// (das storage-Event des Browsers feuert nur in ANDEREN Tabs).
+type Listener = () => void;
+const listeners = new Map<CollectionKey, Set<Listener>>();
+
+/** Meldet einen Listener an; Rückgabewert ist die Abmelde-Funktion. */
+export function subscribeCollection(
+  collection: CollectionKey,
+  fn: Listener,
+): () => void {
+  let set = listeners.get(collection);
+  if (!set) {
+    set = new Set();
+    listeners.set(collection, set);
+  }
+  set.add(fn);
+  return () => set.delete(fn);
+}
+
+function notifyCollection(collection: CollectionKey): void {
+  listeners.get(collection)?.forEach((fn) => fn());
+}
+
 /**
  * Schreibt eine Collection. Wirft bei Speicherproblemen (z. B. Kontingent voll),
  * damit die Oberfläche eine Fehlermeldung anzeigen kann.
@@ -45,6 +68,43 @@ export function writeCollection<T>(collection: CollectionKey, items: T[]): void 
   // Format-Version festhalten (einmalig / idempotent).
   if (window.localStorage.getItem(VERSION_KEY) === null) {
     window.localStorage.setItem(VERSION_KEY, String(STORAGE_VERSION));
+  }
+  notifyCollection(collection);
+}
+
+/**
+ * Ersetzt mehrere Collections atomar: schlägt ein Schreibvorgang fehl,
+ * werden die bereits geschriebenen auf den vorherigen Stand zurückgerollt.
+ * Für Vollbackup-Restore, Importe und Undo. Gibt Erfolg zurück.
+ */
+export function replaceCollections(
+  data: Partial<Record<CollectionKey, unknown[]>>,
+): boolean {
+  if (!isBrowser()) return false;
+  const keys = Object.keys(data) as CollectionKey[];
+  const prevRaw = keys.map((k) => window.localStorage.getItem(storageKey(k)));
+  try {
+    for (const k of keys) {
+      window.localStorage.setItem(storageKey(k), JSON.stringify(data[k]));
+    }
+    if (window.localStorage.getItem(VERSION_KEY) === null) {
+      window.localStorage.setItem(VERSION_KEY, String(STORAGE_VERSION));
+    }
+    keys.forEach(notifyCollection);
+    return true;
+  } catch {
+    // Rollback der bereits geschriebenen Schlüssel.
+    keys.forEach((k, i) => {
+      const prev = prevRaw[i];
+      try {
+        if (prev === null) window.localStorage.removeItem(storageKey(k));
+        else window.localStorage.setItem(storageKey(k), prev);
+      } catch {
+        /* Rollback best effort */
+      }
+    });
+    keys.forEach(notifyCollection);
+    return false;
   }
 }
 

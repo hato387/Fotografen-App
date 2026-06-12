@@ -58,7 +58,7 @@ export function KalenderFilterBar({ filter, onChange, availableTags }: Props) {
             <SelectValue />
           </SelectTrigger>
           <SelectContent>
-            <SelectItem value="alle">Alle</SelectItem>
+            <SelectItem value="alle">Alle Zeiträume</SelectItem>
             <SelectItem value="aktiv">Aktiv jetzt</SelectItem>
             <SelectItem value="bevorstehend">Bevorstehend</SelectItem>
           </SelectContent>

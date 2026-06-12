@@ -116,6 +116,7 @@ export default function KalenderPage() {
                 rows={rows}
                 currentKW={currentKW}
                 onKwChange={setCurrentKW}
+                statusFilter={filter.status}
               />
             </TabsContent>
 

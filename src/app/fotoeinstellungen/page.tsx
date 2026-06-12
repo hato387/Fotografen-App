@@ -23,6 +23,7 @@ import { Card } from "@/components/ui/card";
 import { Input } from "@/components/ui/input";
 import { Skeleton } from "@/components/ui/skeleton";
 import { useFotoeinstellungen } from "@/hooks/use-fotoeinstellungen";
+import { replaceCollections } from "@/lib/storage";
 import { Fotoeinstellung } from "@/lib/types";
 
 export default function FotoeinstellungenPage() {
@@ -69,8 +70,19 @@ export default function FotoeinstellungenPage() {
 
   const confirmDelete = () => {
     if (!toDelete) return;
+    const snapshot = store.items;
     store.remove(toDelete.id);
-    toast.success("Fotoeinstellung gelöscht.");
+    toast.success("Fotoeinstellung gelöscht.", {
+      duration: 6000,
+      action: {
+        label: "Rückgängig",
+        onClick: () => {
+          if (replaceCollections({ fotoeinstellungen: snapshot }))
+            toast.success("Wiederhergestellt.");
+          else toast.error("Wiederherstellen fehlgeschlagen.");
+        },
+      },
+    });
     setToDelete(null);
   };
 
@@ -153,7 +165,7 @@ export default function FotoeinstellungenPage() {
         <AlertDialogContent>
           <AlertDialogHeader>
             <AlertDialogTitle>
-              „{toDelete?.name}" wirklich löschen?
+              „{toDelete?.name}“ wirklich löschen?
             </AlertDialogTitle>
             <AlertDialogDescription>
               Diese Aktion kann nicht rückgängig gemacht werden.
@@ -249,7 +261,7 @@ function EmptyState({ onCreate }: { onCreate: () => void }) {
       <div className="space-y-1">
         <h2 className="text-lg font-semibold">Noch keine Fotoeinstellungen</h2>
         <p className="mx-auto max-w-sm text-sm text-muted-foreground">
-          Halte bewährte Kamera-Rezepte fest — z. B. „Vogel im Flug".
+          Halte bewährte Kamera-Rezepte fest — z. B. „Vogel im Flug“.
         </p>
       </div>
       <Button size="lg" className="rounded-full" onClick={onCreate}>

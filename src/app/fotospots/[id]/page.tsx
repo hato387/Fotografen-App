@@ -32,6 +32,7 @@ import { Skeleton } from "@/components/ui/skeleton";
 import { useFotospots } from "@/hooks/use-fotospots";
 import { useMotive } from "@/hooks/use-motive";
 import { hasCoords, mapUrl } from "@/lib/geo";
+import { replaceCollections } from "@/lib/storage";
 import { isSafeHttpUrl } from "@/lib/url";
 
 export default function FotospotDetailPage() {
@@ -85,12 +86,23 @@ export default function FotospotDetailPage() {
 
   const handleDelete = () => {
     const name = spot.name;
+    const snapshot = spots.items;
     const ok = spots.remove(spot.id);
     if (!ok) {
       toast.error("Löschen fehlgeschlagen — bitte erneut versuchen.");
       return;
     }
-    toast.success(`Fotospot „${name}" gelöscht.`);
+    toast.success(`Fotospot „${name}" gelöscht.`, {
+      duration: 6000,
+      action: {
+        label: "Rückgängig",
+        onClick: () => {
+          if (replaceCollections({ fotospots: snapshot }))
+            toast.success(`„${name}" wiederhergestellt.`);
+          else toast.error("Wiederherstellen fehlgeschlagen.");
+        },
+      },
+    });
     router.push("/fotospots");
   };
 
@@ -187,7 +199,7 @@ export default function FotospotDetailPage() {
           !spot.beobachtungen &&
           !spot.besteZeit && (
             <p className="text-center text-sm text-muted-foreground">
-              Noch keine Details. Klick auf „Bearbeiten", um Motive, Notizen &
+              Noch keine Details. Klick auf „Bearbeiten“, um Motive, Notizen &
               Co. zu ergänzen.
             </p>
           )}
@@ -205,7 +217,7 @@ export default function FotospotDetailPage() {
         <AlertDialogContent>
           <AlertDialogHeader>
             <AlertDialogTitle>
-              Fotospot „{spot.name}" wirklich löschen?
+              Fotospot „{spot.name}“ wirklich löschen?
             </AlertDialogTitle>
             <AlertDialogDescription>
               Diese Aktion kann nicht rückgängig gemacht werden.

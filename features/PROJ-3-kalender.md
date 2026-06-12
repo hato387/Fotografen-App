@@ -168,6 +168,8 @@ Hinweise:
 
 **Nachbesserung (2026-06-11):** Höhepunkt-Stern in der Jahres-Timeline erscheint jetzt auf **jeder** Balkenbreite (vorher nur >6 % Breite). Balken-Stil unverändert.
 
+**Nachbesserungen (2026-06-12):** Status-Filter zeigt jetzt „Alle Zeiträume" statt mehrdeutigem „Alle" (Mängelliste #7); Wochenansicht blendet bei gesetztem Status-Filter den jeweils irrelevanten Block aus (#11).
+
 **Bugfix (2026-06-12) — echte Ursache des gemeldeten „Höhepunkt-Filter wirkt nicht in der Timeline":** Die Balken-Farbklassen (`barClass` in `src/lib/kategorie.ts`) wurden von Tailwind **nie generiert**, weil `src/lib/**` im `content`-Glob der `tailwind.config.ts` fehlte → alle Timeline-Balken waren **transparent/unsichtbar** (nur der Höhepunkt-Ring aus Komponenten-Klassen war sichtbar). Der Filter arbeitete technisch korrekt, aber unsichtbare Balken verschwinden unsichtbar. Fix: `./src/lib/**/*` zum Tailwind-`content` ergänzt; E2E-Regression-Schutz prüft jetzt die echte Balken-Füllfarbe. Betraf auch Badge-/Gradient-Klassen aus `lib` (Kategorie-Badges, Karten-Platzhalter, Konfidenz-Badges).
 
 ## QA Test Results

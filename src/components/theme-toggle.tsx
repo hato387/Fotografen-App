@@ -9,6 +9,9 @@ export function ThemeToggle() {
   const { resolvedTheme, setTheme } = useTheme();
   const [mounted, setMounted] = useState(false);
 
+  // Kanonisches next-themes-Muster: erst nach dem Mount das echte Theme
+  // rendern (Server kennt es nicht). Der setState-im-Effect ist hier gewollt.
+  // eslint-disable-next-line react-hooks/set-state-in-effect
   useEffect(() => setMounted(true), []);
 
   // Vor dem Mount kennt der Client das echte Theme noch nicht — bis dahin

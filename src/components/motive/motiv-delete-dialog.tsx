@@ -36,7 +36,7 @@ export function MotivDeleteDialog({
       <AlertDialogContent>
         <AlertDialogHeader>
           <AlertDialogTitle>
-            Motiv „{motiv?.name}" wirklich löschen?
+            Motiv „{motiv?.name}“ wirklich löschen?
           </AlertDialogTitle>
           <AlertDialogDescription>
             Diese Aktion kann nicht rückgängig gemacht werden.

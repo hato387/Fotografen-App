@@ -25,12 +25,13 @@ import { Skeleton } from "@/components/ui/skeleton";
 import { useFotospots } from "@/hooks/use-fotospots";
 import { useMotive } from "@/hooks/use-motive";
 import { useSaisonphasen } from "@/hooks/use-saisonphasen";
+import { replaceCollections } from "@/lib/storage";
 import { isSafeHttpUrl } from "@/lib/url";
 
 export default function MotivDetailPage() {
   const params = useParams<{ id: string }>();
   const router = useRouter();
-  const { loaded, getById, update, remove } = useMotive();
+  const { items, loaded, getById, update, remove } = useMotive();
   const saisonStore = useSaisonphasen();
   const spotsStore = useFotospots();
   const [editOpen, setEditOpen] = useState(false);
@@ -82,6 +83,12 @@ export default function MotivDetailPage() {
 
   const handleDelete = () => {
     const name = motiv.name;
+    // Schnappschuss für „Rückgängig" (vor allen Änderungen).
+    const snapshot = {
+      motive: items,
+      saisonphasen: saisonStore.items,
+      fotospots: spotsStore.items,
+    };
     // Kaskade: Saisonphasen löschen, Spot-Verknüpfungen bereinigen.
     if (phaseCount > 0) saisonStore.removeWhere((p) => p.motivId === motiv.id);
     if (verknuepfteSpots.length > 0) {
@@ -98,7 +105,17 @@ export default function MotivDetailPage() {
       toast.error("Löschen fehlgeschlagen — bitte erneut versuchen.");
       return;
     }
-    toast.success(`Motiv „${name}" gelöscht.`);
+    toast.success(`Motiv „${name}" gelöscht.`, {
+      duration: 6000,
+      action: {
+        label: "Rückgängig",
+        onClick: () => {
+          if (replaceCollections(snapshot))
+            toast.success(`„${name}" wiederhergestellt.`);
+          else toast.error("Wiederherstellen fehlgeschlagen.");
+        },
+      },
+    });
     router.push("/motive");
   };
 
@@ -223,7 +240,7 @@ export default function MotivDetailPage() {
           </div>
         ) : (
           <p className="text-center text-sm text-muted-foreground">
-            Dieses Motiv hat noch keine Details. Klick auf „Bearbeiten", um
+            Dieses Motiv hat noch keine Details. Klick auf „Bearbeiten“, um
             Beschreibung, Fototipps & Co. zu ergänzen.
           </p>
         )}
@@ -270,6 +287,9 @@ export default function MotivDetailPage() {
         open={editOpen}
         onOpenChange={setEditOpen}
         motiv={motiv}
+        existingNames={items
+          .filter((m) => m.id !== motiv.id)
+          .map((m) => m.name)}
         onSubmit={handleUpdate}
       />
       <MotivDeleteDialog

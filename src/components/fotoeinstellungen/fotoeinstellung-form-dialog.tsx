@@ -125,8 +125,8 @@ export function FotoeinstellungFormDialog({
             {einstellung ? "Fotoeinstellung bearbeiten" : "Neue Fotoeinstellung"}
           </DialogTitle>
           <DialogDescription>
-            Nur der Name ist Pflicht. Werte als Freitext (z. B. „f/5.6",
-            „1/2000").
+            Nur der Name ist Pflicht. Werte als Freitext (z. B. „f/5.6“,
+            „1/2000“).
           </DialogDescription>
         </DialogHeader>
 

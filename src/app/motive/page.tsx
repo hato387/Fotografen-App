@@ -135,6 +135,7 @@ export default function MotivePage() {
       <MotivFormDialog
         open={formOpen}
         onOpenChange={setFormOpen}
+        existingNames={items.map((m) => m.name)}
         onSubmit={handleCreate}
       />
     </div>
@@ -150,7 +151,7 @@ function EmptyState({ onCreate }: { onCreate: () => void }) {
       <div className="space-y-1">
         <h2 className="text-lg font-semibold">Noch keine Motive</h2>
         <p className="mx-auto max-w-sm text-sm text-muted-foreground">
-          Lege dein erstes Motiv an — z. B. „Eisvogel" — und reichere es nach und
+          Lege dein erstes Motiv an — z. B. „Eisvogel“ — und reichere es nach und
           nach mit Wissen an.
         </p>
       </div>

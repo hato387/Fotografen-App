@@ -6,6 +6,7 @@ import { KategorieBadge } from "@/components/motive/kategorie-badge";
 import { KonfidenzBadge } from "@/components/saisonphasen/konfidenz-badge";
 import { Button } from "@/components/ui/button";
 import { Card } from "@/components/ui/card";
+import { StatusFilter } from "@/lib/kalender";
 import { getCurrentKW, kwSpanne, kwToMonat, MAX_KW } from "@/lib/kw";
 import { isActiveInKW, isUpcoming, weeksUntilStart } from "@/lib/saison";
 import { Motiv, Saisonphase } from "@/lib/types";
@@ -19,13 +20,20 @@ interface Props {
   rows: KalenderRow[];
   currentKW: number;
   onKwChange: (kw: number) => void;
+  /** Bei gesetztem Status-Filter wird der jeweils irrelevante Block ausgeblendet. */
+  statusFilter?: StatusFilter;
 }
 
 function wrap(kw: number): number {
   return ((kw - 1 + MAX_KW) % MAX_KW) + 1;
 }
 
-export function WochenAnsicht({ rows, currentKW, onKwChange }: Props) {
+export function WochenAnsicht({
+  rows,
+  currentKW,
+  onKwChange,
+  statusFilter = "alle",
+}: Props) {
   const aktiv = rows
     .map((r) => ({
       motiv: r.motiv,
@@ -75,26 +83,28 @@ export function WochenAnsicht({ rows, currentKW, onKwChange }: Props) {
         </Button>
       </div>
 
-      {/* Aktiv jetzt */}
-      <section className="space-y-3">
-        <h3 className="text-sm font-medium text-muted-foreground">
-          Aktiv in KW {currentKW} ({aktiv.length})
-        </h3>
-        {aktiv.length === 0 ? (
-          <p className="rounded-xl border border-dashed py-8 text-center text-sm text-muted-foreground">
-            In dieser Woche ist kein Motiv aktiv.
-          </p>
-        ) : (
-          <div className="grid gap-3 sm:grid-cols-2">
-            {aktiv.map((r) => (
-              <MotivPhaseCard key={r.motiv.id} {...r} />
-            ))}
-          </div>
-        )}
-      </section>
+      {/* Aktiv jetzt (ausgeblendet, wenn der Filter nur Bevorstehendes zeigt) */}
+      {statusFilter !== "bevorstehend" && (
+        <section className="space-y-3">
+          <h3 className="text-sm font-medium text-muted-foreground">
+            Aktiv in KW {currentKW} ({aktiv.length})
+          </h3>
+          {aktiv.length === 0 ? (
+            <p className="rounded-xl border border-dashed py-8 text-center text-sm text-muted-foreground">
+              In dieser Woche ist kein Motiv aktiv.
+            </p>
+          ) : (
+            <div className="grid gap-3 sm:grid-cols-2">
+              {aktiv.map((r) => (
+                <MotivPhaseCard key={r.motiv.id} {...r} />
+              ))}
+            </div>
+          )}
+        </section>
+      )}
 
-      {/* Bevorstehend */}
-      {bevorstehend.length > 0 && (
+      {/* Bevorstehend (ausgeblendet, wenn der Filter nur Aktives zeigt) */}
+      {statusFilter !== "aktiv" && bevorstehend.length > 0 && (
         <section className="space-y-3">
           <h3 className="text-sm font-medium text-muted-foreground">
             Bevorstehend (nächste 4 Wochen)

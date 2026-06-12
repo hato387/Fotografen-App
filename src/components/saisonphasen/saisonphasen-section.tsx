@@ -21,6 +21,7 @@ import {
 import { Button } from "@/components/ui/button";
 import type { UseCollectionResult } from "@/hooks/use-local-collection";
 import { kwSpanne } from "@/lib/kw";
+import { replaceCollections } from "@/lib/storage";
 import { Saisonphase } from "@/lib/types";
 
 interface Props {
@@ -70,8 +71,19 @@ export function SaisonphasenSection({ motivId, store }: Props) {
 
   const confirmDelete = () => {
     if (!toDelete) return;
+    const snapshot = store.items;
     store.remove(toDelete.id);
-    toast.success("Saisonphase gelöscht.");
+    toast.success("Saisonphase gelöscht.", {
+      duration: 6000,
+      action: {
+        label: "Rückgängig",
+        onClick: () => {
+          if (replaceCollections({ saisonphasen: snapshot }))
+            toast.success("Saisonphase wiederhergestellt.");
+          else toast.error("Wiederherstellen fehlgeschlagen.");
+        },
+      },
+    });
     setToDelete(null);
   };
 
@@ -166,7 +178,7 @@ export function SaisonphasenSection({ motivId, store }: Props) {
           <AlertDialogHeader>
             <AlertDialogTitle>Saisonphase löschen?</AlertDialogTitle>
             <AlertDialogDescription>
-              „{toDelete?.bezeichnung || "Aktive Zeit"}" wird entfernt. Diese
+              „{toDelete?.bezeichnung || "Aktive Zeit"}“ wird entfernt. Diese
               Aktion kann nicht rückgängig gemacht werden.
             </AlertDialogDescription>
           </AlertDialogHeader>

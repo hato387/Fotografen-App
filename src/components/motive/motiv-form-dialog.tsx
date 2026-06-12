@@ -3,7 +3,7 @@
 import { zodResolver } from "@hookform/resolvers/zod";
 import { Plus, X } from "lucide-react";
 import { useEffect, useState, type KeyboardEvent } from "react";
-import { useFieldArray, useForm } from "react-hook-form";
+import { useFieldArray, useForm, useWatch } from "react-hook-form";
 import { z } from "zod";
 import { Badge } from "@/components/ui/badge";
 import { Button } from "@/components/ui/button";
@@ -114,10 +114,18 @@ interface Props {
   onOpenChange: (open: boolean) => void;
   /** Vorhandenes Motiv → Bearbeiten-Modus; sonst Anlegen-Modus. */
   motiv?: Motiv;
+  /** Namen bestehender Motive für den dezenten Duplikat-Hinweis (kein Block). */
+  existingNames?: string[];
   onSubmit: (input: MotivInput) => void;
 }
 
-export function MotivFormDialog({ open, onOpenChange, motiv, onSubmit }: Props) {
+export function MotivFormDialog({
+  open,
+  onOpenChange,
+  motiv,
+  existingNames = [],
+  onSubmit,
+}: Props) {
   const form = useForm<FormValues>({
     resolver: zodResolver(formSchema),
     defaultValues: emptyValues(),
@@ -134,6 +142,14 @@ export function MotivFormDialog({ open, onOpenChange, motiv, onSubmit }: Props) 
       form.reset(motiv ? motivToValues(motiv) : emptyValues());
     }
   }, [open, motiv, form]);
+
+  // Dezenter Duplikat-Hinweis (Spec: erlaubt, aber sichtbar machen).
+  const watchedName = useWatch({ control: form.control, name: "name" });
+  const aktuellerName = (watchedName ?? "").trim().toLowerCase();
+  const istDuplikat =
+    aktuellerName.length > 0 &&
+    aktuellerName !== (motiv?.name.trim().toLowerCase() ?? "") &&
+    existingNames.some((n) => n.trim().toLowerCase() === aktuellerName);
 
   const handleSubmit = form.handleSubmit((values) => {
     const input: MotivInput = {
@@ -179,6 +195,11 @@ export function MotivFormDialog({ open, onOpenChange, motiv, onSubmit }: Props) 
                     <FormControl>
                       <Input placeholder="z. B. Eisvogel" {...field} />
                     </FormControl>
+                    {istDuplikat && (
+                      <p className="text-xs text-muted-foreground">
+                        Hinweis: Ein Motiv mit diesem Namen existiert bereits.
+                      </p>
+                    )}
                     <FormMessage />
                   </FormItem>
                 )}

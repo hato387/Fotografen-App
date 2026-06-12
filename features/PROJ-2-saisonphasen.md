@@ -102,7 +102,9 @@ Neu/erweitert:
 - **Komponenten:** `src/components/saisonphasen/` — `saisonphasen-section.tsx` (Liste, Leerzustand, Add/Edit/Delete), `saisonphase-form-dialog.tsx` (RHF+Zod, KW-Selects mit Monatsanzeige, Höhepunkt-Switch, Jahresübergang-Hinweis), `konfidenz-badge.tsx`.
 - **Integration:** Abschnitt „Saisonphasen" in `/motive/[id]`. **Kaskaden-Löschen** beim Motiv-Löschen + **dynamische Warnung** (Anzahl Phasen) über die PROJ-1-`warning`-Prop.
 
-Hinweis: Es wird bewusst **eine** `useSaisonphasen`-Instanz auf der Detailseite gehalten und an die Section übergeben (zwei Instanzen würden bei Schreibvorgängen im selben Dokument desynchronisieren).
+Hinweis: Es wird bewusst **eine** `useSaisonphasen`-Instanz auf der Detailseite gehalten und an die Section übergeben. *(Seit 2026-06-12 zusätzlich abgesichert: Same-Tab-Pub/Sub in der Speicher-Schicht hält alle Hook-Instanzen synchron.)*
+
+**Nachbesserungen (2026-06-12):** KW-Eingabe als **Direkteingabe** (Zahlenfeld 1–53 mit Live-Monatsanzeige) statt 53-Einträge-Dropdown (Mängelliste #6); Formular mit `noValidate` (einheitliche deutsche Zod-Meldungen). Saisonphase-Löschen mit **„Rückgängig"-Toast** (#10).
 
 ---
 <!-- Sections below are added by subsequent skills -->
