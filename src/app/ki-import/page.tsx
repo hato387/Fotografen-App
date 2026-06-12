@@ -4,6 +4,7 @@ import { Check, Copy, Sparkles } from "lucide-react";
 import Link from "next/link";
 import { useState } from "react";
 import { toast } from "sonner";
+import { PageHeader } from "@/components/page-header";
 import { Button } from "@/components/ui/button";
 import {
   Card,
@@ -111,20 +112,11 @@ export default function KiImportPage() {
 
   return (
     <div className="space-y-6">
-      <div className="flex items-center gap-3">
-        <div className="flex h-12 w-12 items-center justify-center rounded-2xl bg-primary/10 ring-1 ring-primary/15">
-          <Sparkles className="h-6 w-6 text-primary" />
-        </div>
-        <div>
-          <h1 className="text-2xl font-semibold tracking-tight">
-            KI-Motiv-Import
-          </h1>
-          <p className="text-sm text-muted-foreground">
-            Motiv per KI fachlich befüllen — Prompt erzeugen, Antwort
-            importieren.
-          </p>
-        </div>
-      </div>
+      <PageHeader
+        icon={Sparkles}
+        title="KI-Motiv-Import"
+        description="Motiv per KI fachlich befüllen — Prompt erzeugen, Antwort importieren."
+      />
 
       {/* Schritt 1 */}
       <Card className="rounded-2xl">

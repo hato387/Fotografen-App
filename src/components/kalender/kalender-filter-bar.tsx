@@ -84,7 +84,7 @@ export function KalenderFilterBar({ filter, onChange, availableTags }: Props) {
             set({ kategorie: v as KalenderFilter["kategorie"] })
           }
         >
-          <SelectTrigger className="w-[140px]" aria-label="Kategorie">
+          <SelectTrigger className="w-[160px]" aria-label="Kategorie">
             <SelectValue />
           </SelectTrigger>
           <SelectContent>

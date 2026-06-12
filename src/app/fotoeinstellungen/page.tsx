@@ -17,6 +17,7 @@ import {
   AlertDialogHeader,
   AlertDialogTitle,
 } from "@/components/ui/alert-dialog";
+import { PageHeader } from "@/components/page-header";
 import { Badge } from "@/components/ui/badge";
 import { Button } from "@/components/ui/button";
 import { Card } from "@/components/ui/card";
@@ -88,31 +89,17 @@ export default function FotoeinstellungenPage() {
 
   return (
     <div className="space-y-8">
-      <div className="flex flex-wrap items-center justify-between gap-4">
-        <div className="flex items-center gap-3">
-          <div className="flex h-12 w-12 items-center justify-center rounded-2xl bg-primary/10 ring-1 ring-primary/15">
-            <Camera className="h-6 w-6 text-primary" />
-          </div>
-          <div>
-            <div className="flex items-center gap-2">
-              <h1 className="text-2xl font-semibold tracking-tight">
-                Fotoeinstellungen – Kamera-Rezepte
-              </h1>
-              {store.loaded && store.items.length > 0 && (
-                <Badge variant="secondary" className="rounded-full font-normal">
-                  {store.items.length}
-                </Badge>
-              )}
-            </div>
-            <p className="text-sm text-muted-foreground">
-              Bewährte Blende/Zeit/ISO/Brennweite je Aufnahmesituation.
-            </p>
-          </div>
-        </div>
-        <Button size="lg" className="rounded-full" onClick={openNew}>
-          <Plus className="mr-1 h-4 w-4" /> Neue Fotoeinstellung
-        </Button>
-      </div>
+      <PageHeader
+        icon={Camera}
+        title="Fotoeinstellungen – Kamera-Rezepte"
+        description="Bewährte Blende/Zeit/ISO/Brennweite je Aufnahmesituation."
+        count={store.loaded ? store.items.length : undefined}
+        actions={
+          <Button className="rounded-full" onClick={openNew}>
+            <Plus className="mr-1 h-4 w-4" /> Neue Fotoeinstellung
+          </Button>
+        }
+      />
 
       {(store.items.length > 0 || !store.loaded) && (
         <div className="relative w-full sm:max-w-sm">

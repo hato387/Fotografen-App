@@ -9,6 +9,7 @@ import {
   WochenAnsicht,
   type KalenderRow,
 } from "@/components/kalender/wochen-ansicht";
+import { PageHeader } from "@/components/page-header";
 import { Button } from "@/components/ui/button";
 import { Skeleton } from "@/components/ui/skeleton";
 import { Tabs, TabsContent, TabsList, TabsTrigger } from "@/components/ui/tabs";
@@ -75,19 +76,11 @@ export default function KalenderPage() {
 
   return (
     <div className="space-y-6">
-      <div className="flex items-center gap-3">
-        <div className="flex h-12 w-12 items-center justify-center rounded-2xl bg-primary/10 ring-1 ring-primary/15">
-          <CalendarRange className="h-6 w-6 text-primary" />
-        </div>
-        <div>
-          <h1 className="text-2xl font-semibold tracking-tight">
-            Saison-Kalender
-          </h1>
-          <p className="text-sm text-muted-foreground">
-            Was lohnt sich wann? Wochenansicht &amp; Jahres-Timeline.
-          </p>
-        </div>
-      </div>
+      <PageHeader
+        icon={CalendarRange}
+        title="Saison-Kalender"
+        description="Was lohnt sich wann? Wochenansicht & Jahres-Timeline."
+      />
 
       {motive.items.length === 0 ? (
         <EmptyHint

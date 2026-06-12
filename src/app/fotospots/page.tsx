@@ -8,7 +8,7 @@ import {
   type FotospotInput,
 } from "@/components/fotospots/fotospot-form-dialog";
 import { FotospotCard } from "@/components/fotospots/fotospot-card";
-import { Badge } from "@/components/ui/badge";
+import { PageHeader } from "@/components/page-header";
 import { Button } from "@/components/ui/button";
 import { Input } from "@/components/ui/input";
 import { Skeleton } from "@/components/ui/skeleton";
@@ -52,31 +52,17 @@ export default function FotospotsPage() {
 
   return (
     <div className="space-y-8">
-      <div className="flex flex-wrap items-center justify-between gap-4">
-        <div className="flex items-center gap-3">
-          <div className="flex h-12 w-12 items-center justify-center rounded-2xl bg-primary/10 ring-1 ring-primary/15">
-            <MapPin className="h-6 w-6 text-primary" />
-          </div>
-          <div>
-            <div className="flex items-center gap-2">
-              <h1 className="text-2xl font-semibold tracking-tight">
-                Fotospots &amp; Beobachtungen
-              </h1>
-              {loaded && spots.items.length > 0 && (
-                <Badge variant="secondary" className="rounded-full font-normal">
-                  {spots.items.length}
-                </Badge>
-              )}
-            </div>
-            <p className="text-sm text-muted-foreground">
-              Deine Orte mit GPS, verknüpften Motiven und Fotoideen.
-            </p>
-          </div>
-        </div>
-        <Button size="lg" className="rounded-full" onClick={() => setFormOpen(true)}>
-          <Plus className="mr-1 h-4 w-4" /> Neuer Fotospot
-        </Button>
-      </div>
+      <PageHeader
+        icon={MapPin}
+        title="Fotospots & Beobachtungen"
+        description="Deine Orte mit GPS, verknüpften Motiven und Fotoideen."
+        count={loaded ? spots.items.length : undefined}
+        actions={
+          <Button className="rounded-full" onClick={() => setFormOpen(true)}>
+            <Plus className="mr-1 h-4 w-4" /> Neuer Fotospot
+          </Button>
+        }
+      />
 
       {spots.error && (
         <p className="rounded-xl bg-destructive/10 px-4 py-3 text-sm text-destructive">

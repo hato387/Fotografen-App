@@ -8,7 +8,7 @@ import {
   type MotivInput,
 } from "@/components/motive/motiv-form-dialog";
 import { MotivCard } from "@/components/motive/motiv-card";
-import { Badge } from "@/components/ui/badge";
+import { PageHeader } from "@/components/page-header";
 import { Button } from "@/components/ui/button";
 import { Input } from "@/components/ui/input";
 import { Skeleton } from "@/components/ui/skeleton";
@@ -48,32 +48,17 @@ export default function MotivePage() {
 
   return (
     <div className="space-y-8">
-      {/* Kopfbereich */}
-      <div className="flex flex-wrap items-center justify-between gap-4">
-        <div className="flex items-center gap-3">
-          <div className="flex h-12 w-12 items-center justify-center rounded-2xl bg-primary/10 ring-1 ring-primary/15">
-            <Leaf className="h-6 w-6 text-primary" />
-          </div>
-          <div>
-            <div className="flex items-center gap-2">
-              <h1 className="text-2xl font-semibold tracking-tight">
-                Motive – Arten &amp; Landschaften
-              </h1>
-              {loaded && items.length > 0 && (
-                <Badge variant="secondary" className="rounded-full font-normal">
-                  {items.length}
-                </Badge>
-              )}
-            </div>
-            <p className="text-sm text-muted-foreground">
-              Beschreibung, Verhalten, Fototipps &amp; Saisonphasen – an einem Ort.
-            </p>
-          </div>
-        </div>
-        <Button size="lg" className="rounded-full" onClick={() => setFormOpen(true)}>
-          <Plus className="mr-1 h-4 w-4" /> Neues Motiv
-        </Button>
-      </div>
+      <PageHeader
+        icon={Leaf}
+        title="Motive – Arten & Landschaften"
+        description="Beschreibung, Verhalten, Fototipps & Saisonphasen – an einem Ort."
+        count={loaded ? items.length : undefined}
+        actions={
+          <Button className="rounded-full" onClick={() => setFormOpen(true)}>
+            <Plus className="mr-1 h-4 w-4" /> Neues Motiv
+          </Button>
+        }
+      />
 
       {error && (
         <p className="rounded-xl bg-destructive/10 px-4 py-3 text-sm text-destructive">

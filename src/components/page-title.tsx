@@ -5,6 +5,7 @@ import { useEffect } from "react";
 
 // Aussagekräftiger Browser-Tab-Titel je Bereich (sonst überall identisch).
 const TITLES: { test: (p: string) => boolean; title: string }[] = [
+  { test: (p) => p === "/", title: "Übersicht" },
   { test: (p) => p.startsWith("/motive/"), title: "Motiv-Detail" },
   { test: (p) => p === "/motive", title: "Motive – Arten & Landschaften" },
   { test: (p) => p === "/kalender", title: "Saison-Kalender" },

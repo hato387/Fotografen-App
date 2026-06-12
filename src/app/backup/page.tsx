@@ -13,6 +13,7 @@ import {
   AlertDialogHeader,
   AlertDialogTitle,
 } from "@/components/ui/alert-dialog";
+import { PageHeader } from "@/components/page-header";
 import { Button } from "@/components/ui/button";
 import { Card, CardContent, CardDescription, CardHeader, CardTitle } from "@/components/ui/card";
 import { Checkbox } from "@/components/ui/checkbox";
@@ -164,19 +165,11 @@ export default function BackupPage() {
 
   return (
     <div className="space-y-6">
-      <div className="flex items-center gap-3">
-        <div className="flex h-12 w-12 items-center justify-center rounded-2xl bg-primary/10 ring-1 ring-primary/15">
-          <Save className="h-6 w-6 text-primary" />
-        </div>
-        <div>
-          <h1 className="text-2xl font-semibold tracking-tight">
-            Backup &amp; Import
-          </h1>
-          <p className="text-sm text-muted-foreground">
-            Alles lokal — nichts verlässt dein Gerät.
-          </p>
-        </div>
-      </div>
+      <PageHeader
+        icon={Save}
+        title="Backup & Import"
+        description="Alles lokal — nichts verlässt dein Gerät."
+      />
 
       {/* Vollbackup */}
       <Card className="rounded-2xl">
