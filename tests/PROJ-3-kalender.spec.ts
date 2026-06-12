@@ -77,7 +77,15 @@ test("Umschalten auf Jahres-Timeline zeigt Balken", async ({ page }) => {
     page.getByRole("link", { name: "Eisvogel" }).first(),
   ).toBeVisible();
   // Balken trägt einen Tooltip-Titel mit der KW-Spanne
-  await expect(page.locator('[title*="KW 1–53"]').first()).toBeVisible();
+  const bar = page.locator('[title*="KW 1–53"]').first();
+  await expect(bar).toBeVisible();
+  // Regression-Schutz: Balken muss eine echte Füllfarbe haben (Tailwind muss
+  // die Klassen aus src/lib/kategorie.ts generieren — content-Glob!).
+  const bg = await bar.evaluate(
+    (el) => getComputedStyle(el).backgroundColor,
+  );
+  expect(bg).not.toBe("rgba(0, 0, 0, 0)");
+  expect(bg).not.toBe("transparent");
 });
 
 test("Kategoriefilter blendet andere Kategorien aus", async ({ page }) => {

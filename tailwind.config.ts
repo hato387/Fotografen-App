@@ -6,6 +6,9 @@ const config: Config = {
     "./src/pages/**/*.{js,ts,jsx,tsx,mdx}",
     "./src/components/**/*.{js,ts,jsx,tsx,mdx}",
     "./src/app/**/*.{js,ts,jsx,tsx,mdx}",
+    // Wichtig: lib enthält Styling-Maps (kategorie.ts, konfidenz.ts) —
+    // ohne diesen Glob generiert Tailwind deren Klassen nicht (unsichtbare Balken/Badges).
+    "./src/lib/**/*.{js,ts,jsx,tsx,mdx}",
   ],
   theme: {
   	extend: {

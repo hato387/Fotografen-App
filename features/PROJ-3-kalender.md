@@ -166,7 +166,9 @@ Hinweise:
 - Reine Sicht — kein neues Datenmodell; liest Motive + Saisonphasen (je eine Hook-Instanz).
 - Status-Filter wirkt phasenweise relativ zur aktuellen KW; gilt für beide Ansichten.
 
-**Nachbesserung (2026-06-11):** Höhepunkt-Stern in der Jahres-Timeline erscheint jetzt auf **jeder** Balkenbreite (vorher nur >6 % Breite — dadurch wirkten Höhepunkte auf schmalen Phasen unsichtbar; vermutete Ursache des gemeldeten Filter-Problems). Balken-Stil unverändert.
+**Nachbesserung (2026-06-11):** Höhepunkt-Stern in der Jahres-Timeline erscheint jetzt auf **jeder** Balkenbreite (vorher nur >6 % Breite). Balken-Stil unverändert.
+
+**Bugfix (2026-06-12) — echte Ursache des gemeldeten „Höhepunkt-Filter wirkt nicht in der Timeline":** Die Balken-Farbklassen (`barClass` in `src/lib/kategorie.ts`) wurden von Tailwind **nie generiert**, weil `src/lib/**` im `content`-Glob der `tailwind.config.ts` fehlte → alle Timeline-Balken waren **transparent/unsichtbar** (nur der Höhepunkt-Ring aus Komponenten-Klassen war sichtbar). Der Filter arbeitete technisch korrekt, aber unsichtbare Balken verschwinden unsichtbar. Fix: `./src/lib/**/*` zum Tailwind-`content` ergänzt; E2E-Regression-Schutz prüft jetzt die echte Balken-Füllfarbe. Betraf auch Badge-/Gradient-Klassen aus `lib` (Kategorie-Badges, Karten-Platzhalter, Konfidenz-Badges).
 
 ## QA Test Results
 
